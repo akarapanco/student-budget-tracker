@@ -13,3 +13,14 @@ CREATE TABLE IF NOT EXISTS incomes (
     amount REAL NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users (id)
 );
+
+-- expense table
+CREATE TABLE IF NOT EXISTS expenses (
+    expense_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    category_id INTEGER NOT NULL,
+    amount REAL NOT NULL CHECK(amount > 0),
+    date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users (user_id),
+    FOREIGN KEY (category_id) REFERENCES expense_categories (category_id)
+);

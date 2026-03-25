@@ -1,22 +1,13 @@
 from flask import Flask, render_template, request, redirect, session
 import sqlite3
+import data_magager
+import data_manager
 
 app = Flask(__name__)
 # random key just so it works. can change later
 app.secret_key = '12345'
 
-def setup_db():
-    connection = sqlite3.connect('app_database.db')
-    cursor = connection.cursor()
-
-    with open("schema.sql", "r") as file:
-        sql_cmds = file.read()
-        
-    cursor.execute(sql_cmds)
-
-    # save (w/ commit) and close
-    connection.commit()
-    connection.close()
+data_magager.setup_db()
 
 # register tab
 @app.route('/register', methods=['GET', 'POST'])
@@ -27,17 +18,11 @@ def register():
         username = request.form['username']
         password = request.form['password']
         
-        connection = sqlite3.connect('my_database.db')
-        cursor = connection.cursor()
+        if data_magager.add_user(username, password):
+            return redirect('/login')
         
-        # save user
-        cursor.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, password))
-        
-        connection.commit()
-        connection.close()
-        
-        # Send them to the login page
-        return redirect('/login')
+        else:
+            return "Username already exists! <a href='/register'>Try again</a>"
         
     return render_template('register.html')
 
@@ -48,14 +33,8 @@ def login():
         username = request.form['username']
         password = request.form['password']
         
-        connection = sqlite3.connect('my_database.db')
-        cursor = connection.cursor()
-        
-        # look for user in the database. ? = the inputs on the right
-        cursor.execute("SELECT * FROM users WHERE username = ? AND password = ?", (username, password))
-        user = cursor.fetchone() 
-        connection.close()
-        
+        user = data_magager.verify_user(username, password)
+
         # user exists
         if user is not None:
             # save id in session
@@ -78,24 +57,32 @@ def add_income():
         source = request.form['source']
         amount = request.form['amount']
         
-        # get curr user id
-        curr_user_id = session['user_id']
+        if data_magager.add_income(session['user_id'], source, amount):
+            return "Income saved! <a href='/add_income'>Click here to add another</a>"
         
-        connection = sqlite3.connect('my_database.db')
-        cursor = connection.cursor()
-        
-        # save income, link user id, use vars inputted
-        cursor.execute("INSERT INTO incomes (user_id, source, amount) VALUES (?, ?, ?)", (curr_user_id, source, amount))
-        
-        # Save and close
-        connection.commit()
-        connection.close()
-        
-        return "Income saved! <a href='/add_income'>Click here to add another</a>"
+        else:
+            return "Error saving income. <a href='/add_income'>Try again</a>"
         
     return render_template('add_income.html')
 
+
+
+@app.route('/add_expense', methods=['GET', 'POST'])
+def add_expense():
+    if 'user_id' not in session:
+        return redirect('/login')
+
+    if request.method == 'POST':
+        amount = request.form['amount']
+        category_id = request.form.get('category_id', 1) 
+        
+        if data_manager.add_expense(session['user_id'], category_id, amount):
+            return "Expense logged! <a href='/add_expense'>Add more</a>"
+        else:
+            return "Error: Invalid amount. <a href='/add_expense'>Try again</a>"
+
+    return render_template('add_expense.html')
+
+
 if __name__ == '__main__':
-    # setup db before starting server
-    setup_db()
     app.run(debug=True)
