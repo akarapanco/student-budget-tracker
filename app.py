@@ -82,5 +82,32 @@ def add_expense():
     return render_template('add_expense.html')
 
 
+@app.route('/delete_expense/<int:expense_id>', methods=['POST'])
+def delete_expense(expense_id):
+    if 'user_id' not in session:
+        return redirect('/login')
+
+    if data_manager.delete_expense(expense_id, session['user_id']):
+        return "Expense deleted! <a href='/add_expense'>Back to expenses</a>"
+    else:
+        return "Error deleting expense. <a href='/add_expense'>Try again</a>"
+
+@app.route('/edit_expense/<int:expense_id>', methods=['GET', 'POST'])
+def edit_expense(expense_id):
+    if 'user_id' not in session:
+        return redirect('/login')
+
+    if request.method == 'POST':
+        new_source = request.form['source']
+        new_amount = request.form['amount']
+
+        if data_manager.edit_expense(expense_id, session['user_id'], new_source, new_amount):
+            return "Expense updated! <a href='/add_expense'>Back to expenses</a>"
+        else:
+            return "Error updating expense. <a href='/add_expense'>Try again</a>"
+
+    return render_template('edit_expense.html', expense_id=expense_id)
+
+
 if __name__ == '__main__':
     app.run(debug=True)
