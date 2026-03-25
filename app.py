@@ -1,13 +1,11 @@
 from flask import Flask, render_template, request, redirect, session
-import sqlite3
-import data_magager
 import data_manager
 
 app = Flask(__name__)
 # random key just so it works. can change later
 app.secret_key = '12345'
 
-data_magager.setup_db()
+data_manager.setup_db()
 
 # register tab
 @app.route('/register', methods=['GET', 'POST'])
@@ -18,7 +16,7 @@ def register():
         username = request.form['username']
         password = request.form['password']
         
-        if data_magager.add_user(username, password):
+        if data_manager.add_user(username, password):
             return redirect('/login')
         
         else:
@@ -33,7 +31,7 @@ def login():
         username = request.form['username']
         password = request.form['password']
         
-        user = data_magager.verify_user(username, password)
+        user = data_manager.verify_user(username, password)
 
         # user exists
         if user is not None:
@@ -57,7 +55,7 @@ def add_income():
         source = request.form['source']
         amount = request.form['amount']
         
-        if data_magager.add_income(session['user_id'], source, amount):
+        if data_manager.add_income(session['user_id'], source, amount):
             return "Income saved! <a href='/add_income'>Click here to add another</a>"
         
         else:
