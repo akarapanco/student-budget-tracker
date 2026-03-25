@@ -3,6 +3,18 @@ import os
 
 DB_NAME = 'app_database.db'
 
+def is_valid_txn(amount):
+
+    try:
+        float_amount = float(amount)
+        if amount <= 0:
+            return False
+        else:
+            return True
+    except ValueError:
+        return False
+    
+
 def get_db_connection():
     conn = sqlite3.connect(DB_NAME)
     return conn
@@ -40,6 +52,9 @@ def verify_user(username, password):
     return user
 
 def add_income(user_id, source, amount):
+    if not is_valid_txn(amount):
+        return False
+    
     try:
         connection = get_db_connection()
         connection.execute("INSERT INTO incomes (user_id, source, amount) VALUES (?, ?, ?)", (user_id, source, amount))
@@ -50,6 +65,9 @@ def add_income(user_id, source, amount):
         return False
     
 def add_expense(user_id, source, amount):
+    if not is_valid_txn(amount):
+        return False
+
     try:
         connection = get_db_connection()
         connection.execute("INSERT INTO expenses (user_id, source, amount) VALUES (?, ?, ?)", (user_id, source, amount))
@@ -59,3 +77,34 @@ def add_expense(user_id, source, amount):
     except Exception as e:
         return False
     
+def delete_expense(expense_id, user_id):
+    try:
+        connection = get_db_connection()
+        connection.execute("DELETE FROM expenses WHERE id = ? AND user_id = ?", (expense_id, user_id))
+        connection.commit()
+        connection.close()
+        return True
+    except Exception as e:
+        return False
+    
+
+def edit_expense(expense_id, user_id, new_source, new_amount):
+    if not is_valid_txn(new_amount):
+        return False
+    
+    try:
+        connection = get_db_connection()
+        connection.execute("UPDATE expenses SET source = ?, amount = ? WHERE id = ? AND user_id = ?", (new_source, new_amount, expense_id, user_id))
+        connection.commit()
+        connection.close()
+        return True
+    except Exception as e:
+        return False
+    
+def get_expenses(user_id):
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM expenses WHERE user_id = ?", (user_id,))
+    expenses = cursor.fetchall() 
+    connection.close()
+    return expenses
