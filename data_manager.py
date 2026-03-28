@@ -3,6 +3,30 @@ import os
 
 DB_NAME = 'app_database.db'
 
+
+# def get_user_categories(user_id):
+#     conn = get_db_connection()
+#     categories = conn.execute(
+#         "SELECT * FROM expense_categories WHERE user_id = ?", 
+#         (user_id,)
+#     ).fetchall()
+#     conn.close()
+#     return categories
+
+# def add_custom_category(user_id, name):
+#     try:
+#         conn = get_db_connection()
+#         conn.execute(
+#             "INSERT INTO expense_categories (user_id, name) VALUES (?, ?)", 
+#             (user_id, name.strip())
+#         )
+#         conn.commit()
+#         conn.close()
+#         return True
+#     except sqlite3.IntegrityError:
+#         return False
+    
+
 def is_valid_txn(amount):
 
     try:
@@ -51,26 +75,26 @@ def verify_user(username, password):
     connection.close()
     return user
 
-def add_income(user_id, source, amount):
+def add_income(user_id, course, amount):
     if not is_valid_txn(amount):
         return False
     
     try:
         connection = get_db_connection()
-        connection.execute("INSERT INTO incomes (user_id, source, amount) VALUES (?, ?, ?)", (user_id, source, amount))
+        connection.execute("INSERT INTO incomes (user_id, category_id, amount) VALUES (?, ?, ?)", (user_id, category_id, amount))
         connection.commit()
         connection.close()
         return True
     except Exception as e:
         return False
     
-def add_expense(user_id, source, amount):
+def add_expense(user_id, category_id, amount):
     if not is_valid_txn(amount):
         return False
 
     try:
         connection = get_db_connection()
-        connection.execute("INSERT INTO expenses (user_id, source, amount) VALUES (?, ?, ?)", (user_id, source, amount))
+        connection.execute("INSERT INTO expenses (user_id, category_id, amount) VALUES (?, ?, ?)", (user_id, category_id, amount))
         connection.commit()
         connection.close()
         return True
@@ -88,13 +112,13 @@ def delete_expense(expense_id, user_id):
         return False
     
 
-def edit_expense(expense_id, user_id, new_source, new_amount):
+def edit_expense(expense_id, user_id, new_category_id, new_amount):
     if not is_valid_txn(new_amount):
         return False
     
     try:
         connection = get_db_connection()
-        connection.execute("UPDATE expenses SET source = ?, amount = ? WHERE id = ? AND user_id = ?", (new_source, new_amount, expense_id, user_id))
+        connection.execute("UPDATE expenses SET category_id = ?, amount = ? WHERE id = ? AND user_id = ?", (new_source, new_amount, expense_id, user_id))
         connection.commit()
         connection.close()
         return True
