@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Spending Summary</title>
+</head>
+<body>
+    <h2>Spending Summary</h2>
+
+    {% if totals %}
+        <table border="1" cellpadding="8">
+            <tr>
+                <th>Category</th>
+                <th>Total Spent ($)</th>
+            </tr>
+            {% for category, total in totals %}
+            <tr>
+                <td>{{ category }}</td>
+                <td>{{ total }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>No expenses logged yet.</p>
+    {% endif %}
+
+    <br>
+    <a href="/add_expense">Add Expense</a>
+</body>
+</html>
