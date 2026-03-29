@@ -28,16 +28,14 @@ DB_NAME = 'app_database.db'
     
 
 def is_valid_txn(amount):
-
     try:
         float_amount = float(amount)
-        if amount <= 0:
+        if float_amount <= 0:
             return False
         else:
             return True
     except ValueError:
         return False
-    
 
 def get_db_connection():
     conn = sqlite3.connect(DB_NAME)
