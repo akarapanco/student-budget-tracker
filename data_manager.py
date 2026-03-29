@@ -159,3 +159,22 @@ def get_category_totals(user_id):
         totals.append((name, round(total, 2)))
 
     return totals
+
+def get_financial_overview(user_id):
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    cursor.execute("SELECT SUM(amount) FROM incomes WHERE user_id = ?", (user_id,))
+    total_income = cursor.fetchone()[0] or 0
+
+    cursor.execute("SELECT SUM(amount) FROM expenses WHERE user_id = ?", (user_id,))
+    total_expenses = cursor.fetchone()[0] or 0
+
+    connection.close()
+
+    remaining = round(total_income - total_expenses, 2)
+    return {
+        'total_income': round(total_income, 2),
+        'total_expenses': round(total_expenses, 2),
+        'remaining': remaining
+    }
