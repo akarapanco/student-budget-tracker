@@ -178,3 +178,4 @@ def get_financial_overview(user_id):
         'total_expenses': round(total_expenses, 2),
         'remaining': remaining
     }
+
