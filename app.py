@@ -116,5 +116,13 @@ def spending_summary():
     totals = data_manager.get_category_totals(session['user_id'])
     return render_template('spending_summary.html', totals=totals)
     
+@app.route('/view_expenses')
+def view_expenses():
+    if 'user_id' not in session:
+        return redirect('/login')
+
+    expenses = data_manager.get_expenses(session['user_id'])
+    return render_template('view_expenses.html', expenses=expenses)
+
 if __name__ == '__main__':
     app.run(debug=True)
