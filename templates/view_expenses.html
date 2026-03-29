@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Expenses</title>
+</head>
+<body>
+    <h2>My Expenses</h2>
+
+    {% if expenses %}
+        <table border="1" cellpadding="8">
+            <tr>
+                <th>ID</th>
+                <th>Category</th>
+                <th>Amount ($)</th>
+                <th>Date</th>
+                <th>Actions</th>
+            </tr>
+            {% for expense in expenses %}
+            <tr>
+                <td>{{ expense[0] }}</td>
+                <td>{{ expense[2] }}</td>
+                <td>{{ expense[3] }}</td>
+                <td>{{ expense[4] }}</td>
+                <td>
+                    <a href="/edit_expense/{{ expense[0] }}">Edit</a>
+                    <form action="/delete_expense/{{ expense[0] }}" method="POST" style="display:inline">
+                        <button type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>No expenses logged yet.</p>
+    {% endif %}
+
+    <br>
+    <a href="/add_expense">Add Expense</a> |
+    <a href="/spending_summary">View Summary</a>
+</body>
+</html>
