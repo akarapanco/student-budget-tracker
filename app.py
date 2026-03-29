@@ -108,6 +108,13 @@ def edit_expense(expense_id):
 
     return render_template('edit_expense.html', expense_id=expense_id)
 
+@app.route('/spending_summary')
+def spending_summary():
+    if 'user_id' not in session:
+        return redirect('/login')
 
+    totals = data_manager.get_category_totals(session['user_id'])
+    return render_template('spending_summary.html', totals=totals)
+    
 if __name__ == '__main__':
     app.run(debug=True)
