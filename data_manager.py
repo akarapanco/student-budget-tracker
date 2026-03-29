@@ -130,3 +130,32 @@ def get_expenses(user_id):
     expenses = cursor.fetchall() 
     connection.close()
     return expenses
+
+
+def get_category_totals(user_id):
+    category_names = {
+        1: 'Food & Dining',
+        2: 'Transport',
+        3: 'Entertainment',
+        4: 'Rent/Utilities',
+        5: 'Health & Fitness',
+        6: 'Education',
+        7: 'Shopping',
+        8: 'Travel',
+        9: 'Other'
+    }
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute(
+        "SELECT category_id, SUM(amount) FROM expenses WHERE user_id = ? GROUP BY category_id",
+        (user_id,)
+    )
+    rows = cursor.fetchall()
+    connection.close()
+
+    totals = []
+    for category_id, total in rows:
+        name = category_names.get(category_id, 'Other')
+        totals.append((name, round(total, 2)))
+
+    return totals
