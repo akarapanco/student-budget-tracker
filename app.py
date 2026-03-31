@@ -106,7 +106,10 @@ def edit_expense(expense_id):
         else:
             return "Error updating expense. <a href='/add_expense'>Try again</a>"
 
-    return render_template('edit_expense.html', expense_id=expense_id)
+    expense = data_manager.get_expense(expense_id, session['user_id'])
+    if not expense:
+        return redirect('/view_expenses')
+    return render_template('edit_expense.html', expense=expense)
 
 @app.route('/spending_summary')
 def spending_summary():

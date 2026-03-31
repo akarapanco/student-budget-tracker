@@ -179,3 +179,11 @@ def get_financial_overview(user_id):
         'remaining': remaining
     }
 
+
+def get_expense(expense_id, user_id):
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM expenses WHERE expense_id = ? AND user_id = ?", (expense_id, user_id))
+    expense = cursor.fetchone()
+    connection.close()
+    return expense
