@@ -14,7 +14,7 @@
     <br>
     <h3>Spending by Category</h3>
     {% if totals %}
-        <canvas id="spendingChart" width="400" height="400"></canvas>
+        <canvas id="spendingChart" width="400" height="400" style="max-width:400px; max-height:400px;"></canvas>
         <script>
             const ctx = document.getElementById('spendingChart').getContext('2d');
             const spendingChart = new Chart(ctx, {
