@@ -48,7 +48,7 @@ def setup_db():
     with open("schema.sql", "r") as file:
         sql_cmds = file.read()
         
-    cursor.execute(sql_cmds)
+    cursor.executescript(sql_cmds)
 
     # save (w/ commit) and close
     connection.commit()
@@ -79,7 +79,7 @@ def add_income(user_id, course, amount):
     
     try:
         connection = get_db_connection()
-        connection.execute("INSERT INTO incomes (user_id, category_id, amount) VALUES (?, ?, ?)", (user_id, category_id, amount))
+        connection.execute("INSERT INTO incomes (user_id, source, amount) VALUES (?, ?, ?)", (user_id, category_id, amount))
         connection.commit()
         connection.close()
         return True
