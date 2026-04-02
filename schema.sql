@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS incomes (
     user_id INTEGER NOT NULL,
     source TEXT NOT NULL,
     amount REAL NOT NULL,
+    date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users (id)
 );
 
@@ -21,6 +22,16 @@ CREATE TABLE IF NOT EXISTS expenses (
     category_id INTEGER NOT NULL,
     amount REAL NOT NULL CHECK(amount > 0),
     date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users (user_id),
+    FOREIGN KEY (user_id) REFERENCES users (id),
     FOREIGN KEY (category_id) REFERENCES expense_categories (category_id)
+);
+
+-- budget table
+CREATE TABLE IF NOT EXISTS budgets (
+    budget_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    month TEXT NOT NULL,
+    amount REAL NOT NULL CHECK(amount > 0),
+    FOREIGN KEY (user_id) REFERENCES users (id),
+    UNIQUE(user_id, month)
 );
