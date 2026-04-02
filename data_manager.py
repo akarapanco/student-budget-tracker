@@ -187,3 +187,33 @@ def get_expense(expense_id, user_id):
     expense = cursor.fetchone()
     connection.close()
     return expense
+
+def save_budget(user_id, month, amount):
+    if not is_valid_txn(amount):
+        return False
+    connection = get_db_connection()
+    try:
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM budgets WHERE user_id = ? AND month = ?", (user_id, month))
+        existing_budget = cursor.fetchone()
+        if existing_budget:
+            connection.execute("UPDATE budgets SET amount = ? WHERE user_id = ? AND month = ?", (amount, user_id, month))
+        else:
+            connection.execute("INSERT INTO budgets (user_id, month, amount) VALUES (?, ?, ?)", (user_id, month, amount))
+
+        connection.commit()
+        return True
+    except Exception:
+        return False
+    finally:
+        connection.close()
+
+def get_budget(user_id, month):
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute("SELECT amount FROM budgets WHERE user_id = ? AND month = ?", (user_id, month))
+    row = cursor.fetchone()
+    connection.close()
+    if row:
+        return row[0]
+    return 0

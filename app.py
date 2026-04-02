@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, session
+from datetime import datetime
 import data_manager
 
 app = Flask(__name__)
@@ -136,6 +137,22 @@ def view_expenses():
 
     expenses = data_manager.get_expenses(session['user_id'])
     return render_template('view_expenses.html', expenses=expenses)
+
+@app.route('/set_budget', methods=['GET', 'POST'])
+def set_budget():
+    if 'user_id' not in session:
+        return redirect('/login')
+    current_month = datetime.now().strftime('%Y-%m')  # Use current month
+    if request.method == 'POST':
+        amount = request.form['amount']
+        if data_manager.save_budget(session['user_id'], current_month, amount):
+            return redirect('/set_budget')
+        else:
+            return "Error: Invalid budget amount."
+    overview = data_manager.get_financial_overview(session['user_id'])
+    totals = data_manager.get_category_totals(session['user_id'])
+    current_budget = data_manager.get_budget(session['user_id'], current_month)
+    return render_template('set_budget.html', overview=overview, totals=totals, current_budget=current_budget, current_month=current_month)
 
 if __name__ == '__main__':
     app.run(debug=True)
