@@ -73,13 +73,13 @@ def verify_user(username, password):
     connection.close()
     return user
 
-def add_income(user_id, course, amount):
+def add_income(user_id, source, amount):
     if not is_valid_txn(amount):
         return False
     
     try:
         connection = get_db_connection()
-        connection.execute("INSERT INTO incomes (user_id, source, amount) VALUES (?, ?, ?)", (user_id, category_id, amount))
+        connection.execute("INSERT INTO incomes (user_id, source, amount) VALUES (?, ?, ?)", (user_id, source, amount))
         connection.commit()
         connection.close()
         return True
