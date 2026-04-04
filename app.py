@@ -8,6 +8,11 @@ app.secret_key = '12345'
 
 data_manager.setup_db()
 
+# homepage route: dashboard
+@app.route('/')
+def index():
+    return redirect('/dashboard')
+    
 # register tab
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -38,7 +43,7 @@ def login():
         if user is not None:
             # save id in session
             session['user_id'] = user[0] 
-            return redirect('/add_income')
+            return redirect('/dashboard') # go to dashboard after login
         # user doesnt exist
         else:
             return "Wrong username or password!"
@@ -153,6 +158,23 @@ def set_budget():
     totals = data_manager.get_category_totals(session['user_id'])
     current_budget = data_manager.get_budget(session['user_id'], current_month)
     return render_template('set_budget.html', overview=overview, totals=totals, current_budget=current_budget, current_month=current_month)
+
+# dashboard tab
+@app.route('/dashboard')
+def dashboard():
+    # have to be logged in
+    if 'user_id' not in session:
+        return redirect('/login')
+
+    user_id = session['user_id']
+    current_month = datetime.now().strftime('%Y-%m')
+
+    # stats for dashboard
+    overview = data_manager.get_financial_overview(user_id)
+    totals = data_manager.get_category_totals(user_id)
+    current_budget = data_manager.get_budget(user_id, current_month)
+
+    return render_template('dashboard.html', overview=overview, totals=totals, current_budget=current_budget)
 
 if __name__ == '__main__':
     app.run(debug=True)
