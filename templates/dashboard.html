@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+</head>
+<body>
+    <h2>Student Dashboard</h2>
+    
+    <!-- basic nav -->
+    <nav>
+        <a href="/add_income">Add Income</a> |
+        <a href="/add_expense">Add Expense</a> |
+        <a href="/view_expenses">View Expenses</a> |
+        <a href="/set_budget">Set Budget</a> |
+        <a href="/financial_overview">View Detailed Financial Overview</a>
+    </nav>
+    <br><hr>
+
+    <!-- financial overview -->
+    <h3>Financial Overview</h3>
+    <p><strong>Monthly Budget:</strong> ${{ current_budget }}</p>
+    <p><strong>Total Income:</strong> ${{ overview.total_income }}</p>
+    <p><strong>Total Expenses:</strong> ${{ overview.total_expenses }}</p>
+    <p><strong>Remaining Balance:</strong> ${{ overview.remaining }}</p>
+    <hr>
+
+    <!-- spending summary -->
+    <h3>Spending Summary</h3>
+    {% if totals %}
+        <table border="1" cellpadding="8">
+            <tr>
+                <th>Category</th>
+                <th>Total Spent ($)</th>
+            </tr>
+            {% for category, total in totals %}
+            <tr>
+                <td>{{ category }}</td>
+                <td>{{ total }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>No expenses logged yet. <a href="/add_expense">Log one now!</a></p>
+    {% endif %}
+
+</body>
+</html>
