@@ -1,5 +1,6 @@
+import calendar
+from datetime import datetime
 import sqlite3
-import os
 
 DB_NAME = 'app_database.db'
 
@@ -202,3 +203,33 @@ def get_budget(user_id, month):
     if row:
         return row[0]
     return 0
+
+
+def budget_alert(user_id):
+    now = datetime.now()
+    month = now.strftime('%Y-%m')
+    current_day = now.day
+    total_days = calendar.monthrange(now.year, now.month)[1]
+
+    budget = get_budget(user_id, month)
+    if budget <= 0:
+        return None
+    
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT SUM(amount) FROM expenses WHERE user_id = ? AND  strftime('%Y-%m', date) = ?", (user_id, month))
+    total_spent = cursor.fetchone()[0] or 0
+    conn.close()
+
+    spending_percentage = (total_spent / budget) * 100
+    time_percentage = (current_day / total_days) * 100
+
+    if spending_percentage > time_percentage + 20:
+        return {
+            "level": "warning",
+            "message": f"You have spent {spending_percentage:.2f}% of your budget with {time_percentage:.2f}% of the month gone.",
+            "spending": round(total_spent, 2),
+            "budget": budget
+        }
+    
+    return None

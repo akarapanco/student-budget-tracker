@@ -14,5 +14,12 @@
     {% else %}
         <p>No expenses logged yet. <a href="/add_expense">Log one now!</a></p>
     {% endif %}
+
+    {% if alert %}
+    <div style="background-color: #fff3cd; border: 1px solid #ffeeba; color: #856404; padding: 15px; border-radius: 5px; margin-bottom: 20px; font-weight: bold;">
+            {{ alert.message }}
+        </div>
+    {% endif %}
+
 </div>
 {% endblock %}
