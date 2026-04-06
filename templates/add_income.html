@@ -5,7 +5,7 @@
 {% block content %}
 <div class="card">
     <h2>Add Income</h2>
-    <form action="/add_income" method="POST">
+    <form method="POST" action="{{ url_for('add_income') }}">
         <label>Income Source (e.g., Salary, Refund):</label>
         <input type="text" name="source" placeholder="Where is this money from?" required>
         

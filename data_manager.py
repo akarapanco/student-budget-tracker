@@ -73,26 +73,26 @@ def verify_user(username, password):
     connection.close()
     return user
 
-def add_income(user_id, course, amount):
+def add_income(user_id, source, amount):
     if not is_valid_txn(amount):
         return False
     
     try:
         connection = get_db_connection()
-        connection.execute("INSERT INTO incomes (user_id, source, amount) VALUES (?, ?, ?)", (user_id, category_id, amount))
+        connection.execute("INSERT INTO incomes (user_id, source, amount) VALUES (?, ?, ?)", (user_id, source, amount))
         connection.commit()
         connection.close()
         return True
     except Exception as e:
         return False
     
-def add_expense(user_id, category_id, amount):
+def add_expense(user_id, category, amount):
     if not is_valid_txn(amount):
         return False
 
     try:
         connection = get_db_connection()
-        connection.execute("INSERT INTO expenses (user_id, category_id, amount) VALUES (?, ?, ?)", (user_id, category_id, amount))
+        connection.execute("INSERT INTO expenses (user_id, category, amount) VALUES (?, ?, ?)", (user_id, category, amount))
         connection.commit()
         connection.close()
         return True
@@ -102,7 +102,7 @@ def add_expense(user_id, category_id, amount):
 def delete_expense(expense_id, user_id):
     try:
         connection = get_db_connection()
-        connection.execute("DELETE FROM expenses WHERE id = ? AND user_id = ?", (expense_id, user_id))
+        connection.execute("DELETE FROM expenses WHERE expense_id = ? AND user_id = ?", (expense_id, user_id))
         connection.commit()
         connection.close()
         return True
@@ -110,13 +110,14 @@ def delete_expense(expense_id, user_id):
         return False
     
 
-def edit_expense(expense_id, user_id, new_category_id, new_amount):
+def edit_expense(expense_id, user_id, new_category, new_amount):
     if not is_valid_txn(new_amount):
         return False
     
     try:
         connection = get_db_connection()
-        connection.execute("UPDATE expenses SET category_id = ?, amount = ? WHERE id = ? AND user_id = ?", (new_source, new_amount, expense_id, user_id))
+        connection.execute("UPDATE expenses SET category = ?, amount = ? WHERE id = ? AND user_id = ?", 
+                           (new_category, new_amount, expense_id, user_id))
         connection.commit()
         connection.close()
         return True
@@ -133,32 +134,16 @@ def get_expenses(user_id):
 
 
 def get_category_totals(user_id):
-    category_names = {
-        1: 'Food & Dining',
-        2: 'Transport',
-        3: 'Entertainment',
-        4: 'Rent/Utilities',
-        5: 'Health & Fitness',
-        6: 'Education',
-        7: 'Shopping',
-        8: 'Travel',
-        9: 'Other'
-    }
     connection = get_db_connection()
     cursor = connection.cursor()
     cursor.execute(
-        "SELECT category_id, SUM(amount) FROM expenses WHERE user_id = ? GROUP BY category_id",
+        "SELECT category, SUM(amount) FROM expenses WHERE user_id = ? GROUP BY category",
         (user_id,)
     )
     rows = cursor.fetchall()
     connection.close()
 
-    totals = []
-    for category_id, total in rows:
-        name = category_names.get(category_id, 'Other')
-        totals.append((name, round(total, 2)))
-
-    return totals
+    return rows
 
 def get_financial_overview(user_id):
     connection = get_db_connection()

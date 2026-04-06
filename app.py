@@ -62,7 +62,7 @@ def dashboard():
         return redirect(url_for('login'))
     
     user_id = session['user_id']
-    current_budget = data_manager.get_budget(user_id, datetime.now().strftime('%Y-%m'))
+    current_budget = data_manager.get_budget(user_id, datetime.now().strftime('%Y-%m')) 
     overview = data_manager.get_financial_overview(user_id)
     totals = data_manager.get_category_totals(user_id)
 
@@ -80,12 +80,13 @@ def add_income():
         amount = request.form['amount']
         
         if data_manager.add_income(session['user_id'], source, amount):
-            return "Income saved! <a href='/add_income'>Click here to add another</a>"
+            flash("Income saved!", "success")
+            return redirect(url_for('dashboard'))
         
         else:
-            return "Error saving income. <a href='/add_income'>Try again</a>"
+            flash("Error saving income. Try again</a>", "error")
         
-    return redirect(url_for('add_income'))
+    return render_template('add_income.html')
 
 
 
@@ -96,12 +97,13 @@ def add_expense():
 
     if request.method == 'POST':
         amount = request.form['amount']
-        category_id = request.form.get('category_id', 1) 
+        category = request.form.get('category', 'Other') 
         
-        if data_manager.add_expense(session['user_id'], category_id, amount):
-            return "Expense logged! <a href='/add_expense'>Add more</a>"
+        if data_manager.add_expense(session['user_id'], category, amount):
+            flash("Expense logged!", "success")
+            return redirect(url_for('dashboard'))
         else:
-            return "Error: Invalid amount. <a href='/add_expense'>Try again</a>"
+            flash("Error: Invalid amount.", "error")
 
     return render_template('add_expense.html')
 
@@ -122,17 +124,20 @@ def edit_expense(expense_id):
         return redirect(url_for('login'))
 
     if request.method == 'POST':
-        new_source = request.form['source']
+        new_category = request.form['category']
         new_amount = request.form['amount']
 
-        if data_manager.edit_expense(expense_id, session['user_id'], new_source, new_amount):
-            return "Expense updated! <a href='/add_expense'>Back to expenses</a>"
+        if data_manager.edit_expense(expense_id, session['user_id'], new_category, new_amount):
+            flash("Expense updated!", "success")
+            return redirect(url_for('view_expenses'))
         else:
-            return "Error updating expense. <a href='/add_expense'>Try again</a>"
+            flash("Error updating expense. Try again", "error")
+            return redirect(url_for('view_expenses'))
 
     expense = data_manager.get_expense(expense_id, session['user_id'])
     if not expense:
         return redirect(url_for('view_expenses'))
+    
     return render_template('edit_expense.html', expense=expense)
 
 @app.route('/spending_summary')

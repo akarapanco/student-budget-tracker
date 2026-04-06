@@ -4,9 +4,218 @@
     <meta charset="UTF-8">
     <title>{% block title %}{% endblock %} - Gator Finance</title>
     <style>
-        /* [COPY ALL YOUR UF CSS HERE FROM THE PREVIOUS DASHBOARD STEP] */
-        :root { --uf-blue: #0021A5; --uf-orange: #FA4616; }
-        /* ... include all card, nav, and button styles ... */
+        /* Base Styles & UF Brand Colors */
+        :root {
+            --uf-blue: #0021A5;
+            --uf-orange: #FA4616;
+            --bg-color: #f4f7f6;
+            --text-color: #333333;
+            --card-bg: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header Styling */
+        header {
+            background-color: var(--uf-blue);
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            border-bottom: 5px solid var(--uf-orange);
+            border-radius: 0 0 8px 8px;
+            margin-bottom: 25px;
+        }
+
+        header h2 {
+            margin: 0;
+            font-size: 28px;
+            letter-spacing: 1px;
+        }
+
+        /* Navigation Bar */
+        nav {
+            display: flex;
+            justify-content: space-between; /* Pushes logout to the right */
+            align-items: center;
+            background-color: var(--card-bg);
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 25px;
+        }
+    
+        .nav-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+    
+        nav a {
+            text-decoration: none;
+            color: var(--uf-blue);
+            font-weight: 600;
+            padding: 8px 12px;
+            border-radius: 5px;
+            transition: 0.3s;
+            border: 1px solid #eee;
+        }
+    
+        nav a:hover {
+            background-color: var(--uf-blue);
+            color: white;
+        }
+    
+        /* Unique style for Logout */
+        .logout-btn {
+            background-color: #f8f9fa;
+            color: #d32f2f !important; /* Red text */
+            border: 1px solid #d32f2f !important;
+        }
+
+        .logout-btn:hover {
+            background-color: #d32f2f !important;
+            color: white !important;
+        }
+
+        /* Dashboard Cards */
+        .card {
+            background-color: var(--card-bg);
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 25px;
+            border-top: 4px solid var(--uf-blue);
+        }
+
+        .card h2 {
+            margin-top: 0;
+            color: var(--uf-blue);
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+
+        .card label {
+            display: block;  
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--uf-blue);
+            text-align: left;
+        }
+
+        .card input {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px; 
+            border: 2px solid #ddd; 
+            border-radius: 6px;
+            font-size: 16px;
+            box-sizing: border-box; 
+        }
+
+        .card button {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background-color: var(--uf-blue);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .card button:hover {
+            background-color: var(--uf-orange);
+        }
+
+
+        /* Financial Overview Grid */
+        .overview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-box {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid var(--uf-orange);
+            text-align: center;
+        }
+
+        .stat-box .label {
+            display: block;
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .stat-box .value {
+            display: block;
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--uf-blue);
+        }
+
+        /* Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--uf-blue);
+            color: white;
+            font-weight: 600;
+        }
+
+        tr {
+            border-bottom: 1px solid #dddddd;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        tr:hover {
+            background-color: #e2e8f0;
+        }
+
+        /* Call to action link */
+        .cta-link {
+            color: var(--uf-orange);
+            font-weight: bold;
+            text-decoration: none;
+        }
+        
+        .cta-link:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>

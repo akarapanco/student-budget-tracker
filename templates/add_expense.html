@@ -4,23 +4,12 @@
 
 {% block content %}
 <div class="card">
-    <h3>Add Expense</h3>
+    <h2>Add Expense</h2>
     
     <form action="/add_expense" method="POST">
         <div style="margin-bottom: 15px;">
-            <label for="category_id" style="display: block; font-weight: bold; margin-bottom: 5px;">Category:</label>
-            <select name="category_id" id="category_id" required 
-                    style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;">
-                <option value="1">Food & Dining</option>
-                <option value="2">Transportation</option>
-                <option value="3">Entertainment</option>
-                <option value="4">Rent/Utilities</option>
-                <option value="5">Health & Fitness</option>
-                <option value="6">Education</option>
-                <option value="7">Shopping</option>
-                <option value="8">Travel</option>
-                <option value="9">Other</option>
-            </select>
+            <label for="category">Expense Category (e.g., Food, Rent):</label>
+            <input type="text" name="category" id="category" placeholder="What is this for?" required>
         </div>
 
         <div style="margin-bottom: 15px;">
