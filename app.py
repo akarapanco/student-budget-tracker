@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 from datetime import datetime, timedelta
 import data_manager
 
@@ -8,6 +8,15 @@ app.secret_key = '12345'
 app.config['SESSION_TYPE'] = timedelta(minutes = 30)
 
 data_manager.setup_db()
+
+@app.route('/')
+def home():
+    # If the user is already logged in, send them to the dashboard
+    if 'user_id' in session:
+        return redirect(url_for('dashboard'))
+    
+    # Otherwise, make them log in first
+    return redirect(url_for('login'))
 
 # register tab
 @app.route('/register', methods=['GET', 'POST'])
@@ -19,7 +28,7 @@ def register():
         password = request.form['password']
         
         if data_manager.add_user(username, password):
-            return redirect('/login')
+            return redirect(url_for('login'))
         
         else:
             return "Username already exists! <a href='/register'>Try again</a>"
@@ -40,19 +49,31 @@ def login():
             # save id in session
             session.permanent = True
             session['user_id'] = user[0] 
-            return render_template('dashboard.html')
+            return redirect(url_for('dashboard'))
         # user doesnt exist
         else:
             return "Wrong username or password!"
             
     return render_template('login.html')
 
+@app.route('/dashboard')
+def dashboard():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    user_id = session['user_id']
+    current_budget = data_manager.get_budget(user_id, datetime.now().strftime('%Y-%m'))
+    overview = data_manager.get_financial_overview(user_id)
+    totals = data_manager.get_category_totals(user_id)
+
+    return render_template('dashboard.html', current_budget=current_budget, overview=overview, totals=totals)
+
 # add income tab
 @app.route('/add_income', methods=['GET', 'POST'])
 def add_income():
     # if not logged in, goto login
     if 'user_id' not in session:
-        return redirect('/login')
+        return redirect(url_for('login'))
         
     if request.method == 'POST':
         source = request.form['source']
@@ -64,14 +85,14 @@ def add_income():
         else:
             return "Error saving income. <a href='/add_income'>Try again</a>"
         
-    return render_template('add_income.html')
+    return redirect(url_for('add_income'))
 
 
 
 @app.route('/add_expense', methods=['GET', 'POST'])
 def add_expense():
     if 'user_id' not in session:
-        return redirect('/login')
+        return redirect(url_for('login'))
 
     if request.method == 'POST':
         amount = request.form['amount']
@@ -88,7 +109,7 @@ def add_expense():
 @app.route('/delete_expense/<int:expense_id>', methods=['POST'])
 def delete_expense(expense_id):
     if 'user_id' not in session:
-        return redirect('/login')
+        return redirect(url_for('login'))
 
     if data_manager.delete_expense(expense_id, session['user_id']):
         return "Expense deleted! <a href='/add_expense'>Back to expenses</a>"
@@ -98,7 +119,7 @@ def delete_expense(expense_id):
 @app.route('/edit_expense/<int:expense_id>', methods=['GET', 'POST'])
 def edit_expense(expense_id):
     if 'user_id' not in session:
-        return redirect('/login')
+        return redirect(url_for('login'))
 
     if request.method == 'POST':
         new_source = request.form['source']
@@ -111,13 +132,13 @@ def edit_expense(expense_id):
 
     expense = data_manager.get_expense(expense_id, session['user_id'])
     if not expense:
-        return redirect('/view_expenses')
+        return redirect(url_for('view_expenses'))
     return render_template('edit_expense.html', expense=expense)
 
 @app.route('/spending_summary')
 def spending_summary():
     if 'user_id' not in session:
-        return redirect('/login')
+        return redirect(url_for('login'))
 
     totals = data_manager.get_category_totals(session['user_id'])
     return render_template('spending_summary.html', totals=totals)
@@ -125,7 +146,7 @@ def spending_summary():
 @app.route('/financial_overview')
 def financial_overview():
     if 'user_id' not in session:
-        return redirect('/login')
+        return redirect(url_for('login'))
 
     overview = data_manager.get_financial_overview(session['user_id'])
     totals = data_manager.get_category_totals(session['user_id'])
@@ -135,7 +156,7 @@ def financial_overview():
 @app.route('/view_expenses')
 def view_expenses():
     if 'user_id' not in session:
-        return redirect('/login')
+        return redirect(url_for('login'))
 
     expenses = data_manager.get_expenses(session['user_id'])
     return render_template('view_expenses.html', expenses=expenses)
@@ -143,12 +164,12 @@ def view_expenses():
 @app.route('/set_budget', methods=['GET', 'POST'])
 def set_budget():
     if 'user_id' not in session:
-        return redirect('/login')
+        return redirect(url_for('login'))
     current_month = datetime.now().strftime('%Y-%m')  # Use current month
     if request.method == 'POST':
         amount = request.form['amount']
         if data_manager.save_budget(session['user_id'], current_month, amount):
-            return redirect('/set_budget')
+            return redirect(url_for('set_budget'))
         else:
             return "Error: Invalid budget amount."
     overview = data_manager.get_financial_overview(session['user_id'])
@@ -160,7 +181,7 @@ def set_budget():
 @app.route('/logout')
 def logout():
     session.clear()
-    return redirect('/login')
+    return redirect(url_for('login'))
 
 
 if __name__ == '__main__':
