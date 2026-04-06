@@ -1,17 +1,18 @@
-<!DOCTYPE html>
-<html>
-<body>
+{% extends "layout.html" %}
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 400px; margin: 50px auto;">
     <h2>Login</h2>
     <form method="POST">
-        <label>Username:</label><br>
-        <input type="text" name="username" required><br><br>
-        
-        <label>Password:</label><br>
-        <input type="password" name="password" required><br><br>
-        
+        <label>Username:</label>
+        <input type="text" name="username" required>
+        <label>Password:</label>
+        <input type="password" name="password" required>
         <button type="submit">Login</button>
     </form>
-    <br>
-    <a href="/register">Don't have an account? Register here.</a>
-</body>
-</html>
+    <p style="margin-top: 15px; text-align: center;">
+        <a href="/register" class="cta-link">Don't have an account? Register.</a>
+    </p>
+</div>
+{% endblock %}

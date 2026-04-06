@@ -1,47 +1,254 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+    <style>
+        /* Base Styles & UF Brand Colors */
+        :root {
+            --uf-blue: #0021A5;
+            --uf-orange: #FA4616;
+            --bg-color: #f4f7f6;
+            --text-color: #333333;
+            --card-bg: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header Styling */
+        header {
+            background-color: var(--uf-blue);
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            border-bottom: 5px solid var(--uf-orange);
+            border-radius: 0 0 8px 8px;
+            margin-bottom: 25px;
+        }
+
+        header h2 {
+            margin: 0;
+            font-size: 28px;
+            letter-spacing: 1px;
+        }
+
+        /* Navigation Bar */
+        nav {
+            display: flex;
+            justify-content: space-between; /* Pushes logout to the right */
+            align-items: center;
+            background-color: var(--card-bg);
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 25px;
+        }
+    
+        .nav-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+    
+        nav a {
+            text-decoration: none;
+            color: var(--uf-blue);
+            font-weight: 600;
+            padding: 8px 12px;
+            border-radius: 5px;
+            transition: 0.3s;
+            border: 1px solid #eee;
+        }
+    
+        nav a:hover {
+            background-color: var(--uf-blue);
+            color: white;
+        }
+    
+        /* Unique style for Logout */
+        .logout-btn {
+            background-color: #f8f9fa;
+            color: #d32f2f !important; /* Red text */
+            border: 1px solid #d32f2f !important;
+        }
+
+    .logout-btn:hover {
+        background-color: #d32f2f !important;
+        color: white !important;
+    }
+
+        /* Dashboard Cards */
+        .card {
+            background-color: var(--card-bg);
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 25px;
+            border-top: 4px solid var(--uf-blue);
+        }
+
+        .card h3 {
+            margin-top: 0;
+            color: var(--uf-blue);
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        /* Financial Overview Grid */
+        .overview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-box {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid var(--uf-orange);
+            text-align: center;
+        }
+
+        .stat-box .label {
+            display: block;
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .stat-box .value {
+            display: block;
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--uf-blue);
+        }
+
+        /* Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--uf-blue);
+            color: white;
+            font-weight: 600;
+        }
+
+        tr {
+            border-bottom: 1px solid #dddddd;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        tr:hover {
+            background-color: #e2e8f0;
+        }
+
+        /* Call to action link */
+        .cta-link {
+            color: var(--uf-orange);
+            font-weight: bold;
+            text-decoration: none;
+        }
+        
+        .cta-link:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
-    <h2>Student Dashboard</h2>
-    
-    <!-- basic nav -->
+
+    <header>
+        <h2>Student Budget Tracker</h2>
+    </header>
+
+    <div class="container">
+        
     <nav>
-        <a href="/add_income">Add Income</a> |
-        <a href="/add_expense">Add Expense</a> |
-        <a href="/view_expenses">View Expenses</a> |
-        <a href="/set_budget">Set Budget</a> |
-        <a href="/financial_overview">View Detailed Financial Overview</a>
+        <div class="nav-group">
+            <a href="{{ url_for('add_income') }}">Add Income</a>
+            <a href="{{ url_for('add_expense') }}">Add Expense</a>
+            <a href="{{ url_for('view_expenses') }}">View/Edit Expenses</a>
+            <a href="{{ url_for('set_budget') }}">Set Budget</a>
+            <a href="{{ url_for('spending_summary') }}">Spending Summary</a>
+            <a href="{{ url_for('financial_overview') }}">Financial Overview</a>
+        </div>
+        
+        <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
     </nav>
-    <br><hr>
 
-    <!-- financial overview -->
-    <h3>Financial Overview</h3>
-    <p><strong>Monthly Budget:</strong> ${{ current_budget }}</p>
-    <p><strong>Total Income:</strong> ${{ overview.total_income }}</p>
-    <p><strong>Total Expenses:</strong> ${{ overview.total_expenses }}</p>
-    <p><strong>Remaining Balance:</strong> ${{ overview.remaining }}</p>
-    <hr>
+        <div class="card">
+            <h3>Financial Overview</h3>
+            <div class="overview-grid">
+                <div class="stat-box">
+                    <span class="label">Monthly Budget</span>
+                    <span class="value">${{ current_budget }}</span>
+                </div>
+                <div class="stat-box">
+                    <span class="label">Total Income</span>
+                    <span class="value" style="color: #2e7d32;">${{ overview.total_income }}</span>
+                </div>
+                <div class="stat-box">
+                    <span class="label">Total Expenses</span>
+                    <span class="value" style="color: #c62828;">${{ overview.total_expenses }}</span>
+                </div>
+                <div class="stat-box" style="border-left-color: var(--uf-blue);">
+                    <span class="label">Remaining Balance</span>
+                    <span class="value">${{ overview.remaining }}</span>
+                </div>
+            </div>
+        </div>
 
-    <!-- spending summary -->
-    <h3>Spending Summary</h3>
-    {% if totals %}
-        <table border="1" cellpadding="8">
-            <tr>
-                <th>Category</th>
-                <th>Total Spent ($)</th>
-            </tr>
-            {% for category, total in totals %}
-            <tr>
-                <td>{{ category }}</td>
-                <td>{{ total }}</td>
-            </tr>
-            {% endfor %}
-        </table>
-    {% else %}
-        <p>No expenses logged yet. <a href="/add_expense">Log one now!</a></p>
-    {% endif %}
+        <div class="card">
+            <h3>Spending Summary</h3>
+            {% if totals %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Total Spent ($)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for category, total in totals %}
+                        <tr>
+                            <td>{{ category }}</td>
+                            <td>{{ total }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No expenses logged yet. <a href="/add_expense" class="cta-link">Log one now!</a></p>
+            {% endif %}
+        </div>
+
+    </div>
 
 </body>
 </html>

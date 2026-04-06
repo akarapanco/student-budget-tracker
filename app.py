@@ -1,10 +1,11 @@
 from flask import Flask, render_template, request, redirect, session
-from datetime import datetime
+from datetime import datetime, timedelta
 import data_manager
 
 app = Flask(__name__)
 # random key just so it works. can change later
 app.secret_key = '12345'
+app.config['SESSION_TYPE'] = timedelta(minutes = 30)
 
 data_manager.setup_db()
 
@@ -37,8 +38,9 @@ def login():
         # user exists
         if user is not None:
             # save id in session
+            session.permanent = True
             session['user_id'] = user[0] 
-            return redirect('/add_income')
+            return render_template('dashboard.html')
         # user doesnt exist
         else:
             return "Wrong username or password!"
@@ -153,6 +155,13 @@ def set_budget():
     totals = data_manager.get_category_totals(session['user_id'])
     current_budget = data_manager.get_budget(session['user_id'], current_month)
     return render_template('set_budget.html', overview=overview, totals=totals, current_budget=current_budget, current_month=current_month)
+
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect('/login')
+
 
 if __name__ == '__main__':
     app.run(debug=True)

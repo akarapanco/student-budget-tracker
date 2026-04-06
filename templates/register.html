@@ -1,17 +1,25 @@
-<!DOCTYPE html>
-<html>
-<body>
-    <h2>Register</h2>
+{% extends "layout.html" %}
+
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 400px; margin: 40px auto;">
+    <h2 style="color: var(--uf-blue); text-align: center; margin-top: 0;">Create Account</h2>
+    <p style="text-align: center; font-size: 0.9em; color: #666;">Join Gator Finance to start tracking your budget.</p>
+    
     <form method="POST">
-        <label>Username:</label><br>
-        <input type="text" name="username" required><br><br>
+        <label style="font-weight: bold; color: var(--uf-blue);">Username:</label>
+        <input type="text" name="username" placeholder="Choose a unique username" required>
         
-        <label>Password:</label><br>
-        <input type="password" name="password" required><br><br>
+        <label style="font-weight: bold; color: var(--uf-blue);">Password:</label>
+        <input type="password" name="password" placeholder="Create a strong password" required>
         
         <button type="submit">Register</button>
     </form>
-    <br>
-    <a href="/login">Already have an account? Login here.</a>
-</body>
-</html>
+    
+    <div style="margin-top: 20px; text-align: center; border-top: 1px solid #eee; padding-top: 15px;">
+        <span style="font-size: 0.9em; color: #666;">Already have an account?</span><br>
+        <a href="{{ url_for('login') }}" class="cta-link" style="font-weight: bold; text-decoration: none; color: var(--uf-orange);">Login here</a>
+    </div>
+</div>
+{% endblock %}

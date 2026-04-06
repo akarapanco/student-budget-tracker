@@ -1,29 +1,18 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Spending Summary</title>
-</head>
-<body>
-    <h2>Spending Summary</h2>
+{% extends "layout.html" %}
+{% block title %}Spending Summary{% endblock %}
 
+{% block content %}
+<div class="card">
+    <h2>Spending Summary</h2>
     {% if totals %}
-        <table border="1" cellpadding="8">
-            <tr>
-                <th>Category</th>
-                <th>Total Spent ($)</th>
-            </tr>
+        <table>
+            <tr><th>Category</th><th>Total Spent ($)</th></tr>
             {% for category, total in totals %}
-            <tr>
-                <td>{{ category }}</td>
-                <td>{{ total }}</td>
-            </tr>
+            <tr><td>{{ category }}</td><td>{{ total }}</td></tr>
             {% endfor %}
         </table>
     {% else %}
-        <p>No expenses logged yet.</p>
+        <p>No expenses logged yet. <a href="/add_expense">Log one now!</a></p>
     {% endif %}
-
-    <br>
-    <a href="/add_expense">Add Expense</a>
-</body>
-</html>
+</div>
+{% endblock %}
