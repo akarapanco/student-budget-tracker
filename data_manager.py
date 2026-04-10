@@ -117,7 +117,7 @@ def edit_expense(expense_id, user_id, new_category, new_amount):
     
     try:
         connection = get_db_connection()
-        connection.execute("UPDATE expenses SET category = ?, amount = ? WHERE id = ? AND user_id = ?", 
+        connection.execute("UPDATE expenses SET category = ?, amount = ? WHERE expense_id = ? AND user_id = ?",
                            (new_category, new_amount, expense_id, user_id))
         connection.commit()
         connection.close()
