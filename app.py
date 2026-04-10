@@ -176,7 +176,7 @@ def set_budget():
     if request.method == 'POST':
         amount = request.form['amount']
         if data_manager.save_budget(session['user_id'], current_month, amount):
-            return redirect(url_for('set_budget'))
+            return redirect(url_for('dashboard'))
         else:
             return "Error: Invalid budget amount."
     overview = data_manager.get_financial_overview(session['user_id'])
