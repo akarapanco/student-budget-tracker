@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{% endblock %} - Student Budget Tracker</title>
     <style>
         /* Base Styles & UF Brand Colors */
@@ -11,14 +12,17 @@
             --bg-color: #f4f7f6;
             --text-color: #333333;
             --card-bg: #ffffff;
+            --sidebar-width: 260px;
         }
 
+        /* Essential Layout Engine */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
             padding: 0;
+            min-height: 100vh;
         }
 
         .container {
@@ -224,6 +228,7 @@
     </header>
 
     <div class="container">
+        {% if session.get('user_id') %}
         <nav>
             <div class="nav-group">
                 <a href="{{ url_for('dashboard') }}">Dashboard</a>
@@ -233,10 +238,20 @@
                 <a href="{{ url_for('spending_summary') }}">Summary</a>
                 <a href="{{ url_for('set_budget') }}">Set Budget</a> </div>
             <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
-        </nav>
 
-        {% block content %}
-        {% endblock %}
+        </nav>
+        {% endif %}
+    </div>
+    <div class="container">
+            {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                {% for message in messages %}
+                  <div class="alert">{{ message }}</div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+
+            {% block content %}{% endblock %}
     </div>
 </body>
 </html>
