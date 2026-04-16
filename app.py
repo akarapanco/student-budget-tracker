@@ -52,7 +52,7 @@ def login():
             return redirect(url_for('dashboard'))
         # user doesnt exist
         else:
-            return "Wrong username or password!"
+            return "Wrong username or password! <a href='/login'>Try again</a>"
             
     return render_template('login.html')
 
@@ -178,7 +178,7 @@ def set_budget():
         if data_manager.save_budget(session['user_id'], current_month, amount):
             return redirect(url_for('dashboard'))
         else:
-            return "Error: Invalid budget amount."
+            return "Error: Invalid budget amount. <a href='/set_budget'>Try again</a>"
     overview = data_manager.get_financial_overview(session['user_id'])
     totals = data_manager.get_category_totals(session['user_id'])
     current_budget = data_manager.get_budget(session['user_id'], current_month)
