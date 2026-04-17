@@ -220,14 +220,76 @@
         .cta-link:hover {
             text-decoration: underline;
         }
+
+        .success-popup {
+            position: relative;
+            background-color: #e8f5e9;
+            color: #1b5e20;
+            border: 1px solid #c8e6c9;
+            border-left: 6px solid #2e7d32;
+            padding: 14px 40px 14px 14px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        .error-popup {
+            position: relative;
+            background-color: #fdecea;
+            color: #b71c1c;
+            border: 1px solid #f5c2c7;
+            border-left: 6px solid #d32f2f;
+            padding: 14px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-btn:hover {
+            color: #7f0000;
+        }
+
+
     </style>
 </head>
 <body>
     <header>
         <h2>Student Budget Tracker</h2>
     </header>
-
     <div class="container">
+        {% if success_message %}
+        <div class="success-popup" id="successPopup">
+            <span class="close-btn" onclick="document.getElementById('successPopup').style.display='none'">&times;</span>
+            {{ success_message }}
+        </div>
+        {% endif %}
+        {% if error_message %}
+        <div class="error-popup" id="errorPopup">
+            <span class="close-btn" onclick="document.getElementById('errorPopup').style.display='none'">&times;</span>
+            {{ error_message }}
+        </div>
+        {% endif %}
+        <script>
+            setTimeout(function() {
+                const successPopup = document.getElementById('successPopup');
+                if (successPopup) {
+                    successPopup.style.display = 'none';
+                }
+                const errorPopup = document.getElementById('errorPopup');
+                if (errorPopup) {
+                    errorPopup.style.display = 'none';
+                }
+            }, 5000);
+        </script>
         {% if session.get('user_id') %}
         <nav>
             <div class="nav-group">
