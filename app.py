@@ -31,7 +31,7 @@ def register():
             return redirect(url_for('login'))
         
         else:
-            return "Username already exists! <a href='/register'>Try again</a>"
+            return render_template('register.html', error_message="Username already exists!")
         
     return render_template('register.html')
 
@@ -52,7 +52,7 @@ def login():
             return redirect(url_for('dashboard'))
         # user doesnt exist
         else:
-            return "Wrong username or password! <a href='/login'>Try again</a>"
+            return render_template('login.html', error_message="Incorrect username or password!")
             
     return render_template('login.html')
 
@@ -66,8 +66,9 @@ def dashboard():
     overview = data_manager.get_financial_overview(user_id)
     totals = data_manager.get_category_totals(user_id)
     alert = data_manager.budget_alert(user_id)
+    success_message = session.pop('success_message', None)
 
-    return render_template('dashboard.html', current_budget=current_budget, overview=overview, totals=totals, alert=alert)
+    return render_template('dashboard.html', current_budget=current_budget, overview=overview, totals=totals, alert=alert, success_message=success_message)
 
 # add income tab
 @app.route('/add_income', methods=['GET', 'POST'])
@@ -81,11 +82,10 @@ def add_income():
         amount = request.form['amount']
         
         if data_manager.add_income(session['user_id'], source, amount):
-            flash("Income saved!", "success")
+            session['success_message'] = "Income saved!"
             return redirect(url_for('dashboard'))
-        
         else:
-            flash("Error saving income. Try again</a>", "error")
+            return render_template('add_income.html', error_message="Error saving income. Please try again.")
         
     return render_template('add_income.html')
 
@@ -101,10 +101,10 @@ def add_expense():
         category = request.form.get('category', 'Other') 
         
         if data_manager.add_expense(session['user_id'], category, amount):
-            flash("Expense logged!", "success")
+            session['success_message'] = "Expense logged!"
             return redirect(url_for('dashboard'))
         else:
-            flash("Error: Invalid amount.", "error")
+            return render_template('add_expense.html', error_message="Error logging expense. Please try again.")
 
     return render_template('add_expense.html')
 
@@ -115,9 +115,10 @@ def delete_expense(expense_id):
         return redirect(url_for('login'))
 
     if data_manager.delete_expense(expense_id, session['user_id']):
-        return "Expense deleted! <a href='/add_expense'>Back to expenses</a>"
+        session['success_message'] = "Expense deleted successfully."
     else:
-        return "Error deleting expense. <a href='/add_expense'>Try again</a>"
+        session['error_message'] = "Error deleting expense. Please try again."
+    return redirect(url_for('view_expenses'))
 
 @app.route('/edit_expense/<int:expense_id>', methods=['GET', 'POST'])
 def edit_expense(expense_id):
@@ -129,11 +130,12 @@ def edit_expense(expense_id):
         new_amount = request.form['amount']
 
         if data_manager.edit_expense(expense_id, session['user_id'], new_category, new_amount):
-            flash("Expense updated!", "success")
+            session['success_message'] = "Expense updated."
             return redirect(url_for('view_expenses'))
         else:
-            flash("Error updating expense. Try again", "error")
-            return redirect(url_for('view_expenses'))
+            expense = data_manager.get_expense(expense_id, session['user_id'])
+            return render_template('edit_expense.html', expense=expense,
+                                   error_message="Error updating expense. Please try again.")
 
     expense = data_manager.get_expense(expense_id, session['user_id'])
     if not expense:
@@ -166,7 +168,9 @@ def view_expenses():
         return redirect(url_for('login'))
 
     expenses = data_manager.get_expenses(session['user_id'])
-    return render_template('view_expenses.html', expenses=expenses)
+    success_message = session.pop('success_message', None)
+    error_message = session.pop('error_message', None)
+    return render_template('view_expenses.html', expenses=expenses, success_message=success_message, error_message=error_message)
 
 @app.route('/set_budget', methods=['GET', 'POST'])
 def set_budget():
@@ -176,9 +180,10 @@ def set_budget():
     if request.method == 'POST':
         amount = request.form['amount']
         if data_manager.save_budget(session['user_id'], current_month, amount):
+            session['success_message'] = "Budget set successfully!"
             return redirect(url_for('dashboard'))
         else:
-            return "Error: Invalid budget amount. <a href='/set_budget'>Try again</a>"
+            return render_template('set_budget.html', error_message="Error saving budget. Please try again.")
     overview = data_manager.get_financial_overview(session['user_id'])
     totals = data_manager.get_category_totals(session['user_id'])
     current_budget = data_manager.get_budget(session['user_id'], current_month)
