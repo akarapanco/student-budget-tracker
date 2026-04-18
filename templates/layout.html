@@ -157,7 +157,7 @@
     </header>
 
     <div class="app-body">
-        {% if session.get('user_id') %}
+        {% if session.get('user_id') and request.endpoint not in ['login', 'register'] %}
         <div class="sidebar">
             <div class="balance-card">
                 <div class="bal-amount">Menu</div>
