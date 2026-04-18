@@ -8,7 +8,7 @@
         <table>
             <tr><th>Category</th><th>Total Spent ($)</th></tr>
             {% for category, total in totals %}
-            <tr><td>{{ category }}</td><td>{{ total }}</td></tr>
+            <tr><td>{{ category }}</td><td>${{ "{:,.2f}".format(total|float) }}</td></tr>
             {% endfor %}
         </table>
     {% else %}
@@ -20,6 +20,5 @@
             {{ alert.message }}
         </div>
     {% endif %}
-
 </div>
 {% endblock %}

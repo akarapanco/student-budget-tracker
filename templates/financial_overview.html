@@ -7,9 +7,9 @@
 <div class="card">
     <h2>Financial Overview</h2>
     <div style="display: flex; justify-content: space-around; flex-wrap: wrap; margin-bottom: 30px;">
-        <div class="stat-box"><strong>Total Income:</strong><br>${{ overview.total_income }}</div>
-        <div class="stat-box"><strong>Total Expenses:</strong><br>${{ overview.total_expenses }}</div>
-        <div class="stat-box"><strong>Remaining:</strong><br>${{ overview.remaining }}</div>
+        <div class="stat-box"><strong>Total Income:</strong><br>${{ "{:,.2f}".format(overview.total_income|float) }}</div>
+        <div class="stat-box"><strong>Total Expenses:</strong><br>${{ "{:,.2f}".format(overview.total_expenses|float) }}</div>
+        <div class="stat-box"><strong>Remaining:</strong><br>${{ "{:,.2f}".format(overview.remaining|float) }}</div>
     </div>
 
     <h3>Spending by Category</h3>

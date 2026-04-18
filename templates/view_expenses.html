@@ -1,33 +1,37 @@
 {% extends "layout.html" %}
-{% block title %}My Expenses{% endblock %}
+{% block title %}View Expenses{% endblock %}
 
 {% block content %}
 <div class="card">
     <h2>My Expenses</h2>
     {% if expenses %}
         <table>
-            <tr>
-                <th>Category</th>
-                <th>Amount ($)</th>
-                <th>Date</th>
-                <th>Actions</th>
-            </tr>
-            {% for expense in expenses %}
-            <tr>
-                <td>{{ expense[2] }}</td>
-                <td>{{ expense[3] }}</td>
-                <td>{{ expense[4] }}</td>
-                <td>
-                    <a href="/edit_expense/{{ expense[0] }}" style="color: var(--uf-blue);">Edit</a> | 
-                    <form action="/delete_expense/{{ expense[0] }}" method="POST" style="display:inline">
-                        <button type="submit" style="background: none; color: #d32f2f; border: none; padding: 0; width: auto; font-size: inherit; cursor: pointer;">Delete</button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
+            <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>Amount ($)</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for expense in expenses %}
+                <tr>
+                    <td>{{ expense[2] }}</td>
+                    <td>${{ "{:,.2f}".format(expense[3]|float) }}</td>
+                    <td>{{ expense[4] }}</td>
+                    <td>
+                        <a href="{{ url_for('edit_expense', expense_id=expense[0]) }}">Edit</a> |
+                        <form method="POST" action="{{ url_for('delete_expense', expense_id=expense[0]) }}" style="display:inline;">
+                            <button type="submit" style="background:none;border:none;color:#d32f2f;font-weight:bold;cursor:pointer;padding:0;">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
         </table>
     {% else %}
-        <p>No expenses logged. <a href="/add_expense">Add one!</a></p>
+        <p>No expenses logged yet. <a href="{{ url_for('add_expense') }}" class="cta-link">Add one now!</a></p>
     {% endif %}
 </div>
 {% endblock %}
