@@ -5,41 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{% endblock %} - Student Budget Tracker</title>
     <style>
-        /* Base Styles & UF Brand Colors */
         :root {
             --uf-blue: #0021A5;
             --uf-orange: #FA4616;
             --bg-color: #f4f7f6;
             --text-color: #333333;
             --card-bg: #ffffff;
-            --sidebar-width: 260px;
         }
 
-        /* Essential Layout Engine */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
-            margin: 0;
-            padding: 0;
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        /* Header Styling */
         header {
             background-color: var(--uf-blue);
             color: white;
             padding: 20px 0;
             text-align: center;
             border-bottom: 5px solid var(--uf-orange);
-            border-radius: 0 0 8px 8px;
-            margin-bottom: 25px;
         }
 
         header h2 {
@@ -48,52 +38,96 @@
             letter-spacing: 1px;
         }
 
-        /* Navigation Bar */
-        nav {
+        .app-body {
             display: flex;
-            justify-content: space-between; /* Pushes logout to the right */
-            align-items: center;
-            background-color: var(--card-bg);
-            padding: 15px 25px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            margin-bottom: 25px;
+            flex: 1;
         }
-    
-        .nav-group {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-    
-        nav a {
-            text-decoration: none;
-            color: var(--uf-blue);
-            font-weight: 600;
-            padding: 8px 12px;
-            border-radius: 5px;
-            transition: 0.3s;
-            border: 1px solid #eee;
-        }
-    
-        nav a:hover {
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 220px;
             background-color: var(--uf-blue);
-            color: white;
+            display: flex;
+            flex-direction: column;
+            padding: 1.25rem 1rem;
+            flex-shrink: 0;
+            min-height: 100%;
         }
-    
-        /* Unique style for Logout */
+
+        .balance-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+            border-top: 3px solid var(--uf-orange);
+            margin-bottom: 1.25rem;
+        }
+
+        .balance-card .bal-amount {
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 3px;
+        }
+
+        .balance-card .bal-label {
+            font-size: 11px;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .nav-divider {
+            height: 1px;
+            background: rgba(255,255,255,0.2);
+            margin: 8px 0;
+        }
+
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 12px;
+            border-radius: 8px;
+            color: rgba(255,255,255,0.75);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s;
+            margin-bottom: 2px;
+        }
+
+        .sidebar a:hover {
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+        }
+
+        .sidebar a.active {
+            background: var(--uf-orange);
+            color: #fff;
+        }
+
         .logout-btn {
-            background-color: #f8f9fa;
-            color: #d32f2f !important; /* Red text */
-            border: 1px solid #d32f2f !important;
+            color: var(--uf-orange) !important;
         }
 
         .logout-btn:hover {
-            background-color: #d32f2f !important;
-            color: white !important;
+            background: rgba(250,70,22,0.15) !important;
         }
 
-        /* Dashboard Cards */
+        .nav-spacer { flex: 1; }
+
+        /* MAIN CONTENT */
+        .main-wrapper {
+            flex: 1;
+            padding: 25px;
+            min-width: 0;
+        }
+
+        /* ALL ORIGINAL STYLES UNCHANGED */
+        .container {
+            max-width: 860px;
+            margin: 0 auto;
+        }
+
         .card {
             background-color: var(--card-bg);
             padding: 25px;
@@ -111,24 +145,23 @@
             margin-bottom: 20px;
         }
 
-
         .card label {
-            display: block;  
+            display: block;
             margin-bottom: 8px;
             font-weight: 600;
             color: var(--uf-blue);
             text-align: left;
         }
 
-        .card input {
+        .card input, .card select {
             display: block;
             width: 100%;
             padding: 12px;
-            margin-bottom: 20px; 
-            border: 2px solid #ddd; 
+            margin-bottom: 20px;
+            border: 2px solid #ddd;
             border-radius: 6px;
             font-size: 16px;
-            box-sizing: border-box; 
+            box-sizing: border-box;
         }
 
         .card button {
@@ -148,8 +181,6 @@
             background-color: var(--uf-orange);
         }
 
-
-        /* Financial Overview Grid */
         .overview-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -180,7 +211,6 @@
             color: var(--uf-blue);
         }
 
-        /* Table Styling */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -198,28 +228,52 @@
             font-weight: 600;
         }
 
-        tr {
-            border-bottom: 1px solid #dddddd;
-        }
+        tr { border-bottom: 1px solid #dddddd; }
+        tr:nth-child(even) { background-color: #f8f9fa; }
+        tr:hover { background-color: #e2e8f0; }
 
-        tr:nth-child(even) {
-            background-color: #f8f9fa;
-        }
-
-        tr:hover {
-            background-color: #e2e8f0;
-        }
-
-        /* Call to action link */
         .cta-link {
             color: var(--uf-orange);
             font-weight: bold;
             text-decoration: none;
         }
-        
-        .cta-link:hover {
-            text-decoration: underline;
+
+        .cta-link:hover { text-decoration: underline; }
+
+        .success-popup {
+            position: relative;
+            background-color: #e8f5e9;
+            color: #1b5e20;
+            border: 1px solid #c8e6c9;
+            border-left: 6px solid #2e7d32;
+            padding: 14px 40px 14px 14px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            font-weight: 500;
         }
+
+        .error-popup {
+            position: relative;
+            background-color: #fdecea;
+            color: #b71c1c;
+            border: 1px solid #f5c2c7;
+            border-left: 6px solid #d32f2f;
+            padding: 14px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-btn:hover { color: #7f0000; }
     </style>
 </head>
 <body>
@@ -227,23 +281,48 @@
         <h2>Student Budget Tracker</h2>
     </header>
 
-    <div class="container">
+    <div class="app-body">
         {% if session.get('user_id') %}
-        <nav>
-            <div class="nav-group">
-                <a href="{{ url_for('dashboard') }}">Dashboard</a>
-                <a href="{{ url_for('add_income') }}">Add Income</a>
-                <a href="{{ url_for('add_expense') }}">Add Expense</a>
-                <a href="{{ url_for('view_expenses') }}">View Expenses</a>
-                <a href="{{ url_for('spending_summary') }}">Summary</a>
-                <a href="{{ url_for('financial_overview') }}">Overview</a>
-                <a href="{{ url_for('set_budget') }}">Set Budget</a> </div>
-            <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
-
-        </nav>
+        <div class="sidebar">
+            <div class="balance-card">
+                <div class="bal-amount">Balance</div>
+                <div class="bal-label">Remaining balance</div>
+            </div>
+            <a href="{{ url_for('dashboard') }}">&#9632; Dashboard</a>
+            <div class="nav-divider"></div>
+            <a href="{{ url_for('add_income') }}">+ Add income</a>
+            <a href="{{ url_for('add_expense') }}">&#8211; Add expense</a>
+            <a href="{{ url_for('set_budget') }}">&#9783; Set budget</a>
+            <div class="nav-divider"></div>
+            <a href="{{ url_for('view_expenses') }}">&#9783; View expenses</a>
+            <a href="{{ url_for('spending_summary') }}">&#9783; Summary</a>
+            <a href="{{ url_for('financial_overview') }}">&#9783; Overview</a>
+            <div class="nav-spacer"></div>
+            <a href="{{ url_for('logout') }}" class="logout-btn">&#8594; Logout</a>
+        </div>
         {% endif %}
-    </div>
-    <div class="container">
+
+        <div class="main-wrapper">
+            {% if success_message %}
+            <div class="success-popup" id="successPopup">
+                <span class="close-btn" onclick="document.getElementById('successPopup').style.display='none'">&times;</span>
+                {{ success_message }}
+            </div>
+            {% endif %}
+            {% if error_message %}
+            <div class="error-popup" id="errorPopup">
+                <span class="close-btn" onclick="document.getElementById('errorPopup').style.display='none'">&times;</span>
+                {{ error_message }}
+            </div>
+            {% endif %}
+            <script>
+                setTimeout(function() {
+                    var s = document.getElementById('successPopup');
+                    if (s) s.style.display = 'none';
+                    var e = document.getElementById('errorPopup');
+                    if (e) e.style.display = 'none';
+                }, 5000);
+            </script>
             {% with messages = get_flashed_messages() %}
               {% if messages %}
                 {% for message in messages %}
@@ -251,8 +330,8 @@
                 {% endfor %}
               {% endif %}
             {% endwith %}
-
             {% block content %}{% endblock %}
+        </div>
     </div>
 </body>
 </html>
