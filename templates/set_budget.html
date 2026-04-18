@@ -20,10 +20,7 @@
 <div class="card">
     <h2>Set Budget</h2>
     <form method="POST">
-        <label style="font-weight:600;color:var(--uf-blue);">Overall Monthly Budget:</label>
-        <input type="number" name="amount" step="0.01" min="0" placeholder="0.00" value="{{ current_budget }}">
-
-        <label style="font-weight:600;color:var(--uf-blue);display:block;margin-bottom:8px;">Select categories to set individual budgets:</label>
+        <label style="font-weight:600;color:var(--uf-blue);display:block;margin-bottom:8px;">Select categories to set a budget for:</label>
         <div class="chip-row" id="chipRow">
             {% for category in categories %}
             <div class="chip {% if category in existing %}selected{% endif %}"
