@@ -87,13 +87,13 @@ def add_income(user_id, source, amount):
     except Exception as e:
         return False
     
-def add_expense(user_id, category, amount):
+def add_expense(user_id, category, amount, description=""):
     if not is_valid_txn(amount):
         return False
 
     try:
         connection = get_db_connection()
-        connection.execute("INSERT INTO expenses (user_id, category, amount) VALUES (?, ?, ?)", (user_id, category, amount))
+        connection.execute("INSERT INTO expenses (user_id, category, amount, description) VALUES (?, ?, ?, ?)", (user_id, category, amount, description))
         connection.commit()
         connection.close()
         return True

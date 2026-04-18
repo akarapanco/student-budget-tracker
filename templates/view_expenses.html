@@ -3,13 +3,7 @@
 
 {% block content %}
 <style>
-.badge {
-    display: inline-block;
-    padding: 3px 10px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-}
+.badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
 .badge-food { background: #e8f5e9; color: #2e7d32; }
 .badge-transport { background: #e3f2fd; color: #1565c0; }
 .badge-entertainment { background: #ede7f6; color: #4527a0; }
@@ -18,30 +12,41 @@
 .badge-education { background: #fce4ec; color: #880e4f; }
 .badge-shopping { background: #fbe9e7; color: #bf360c; }
 .badge-travel { background: #f3e5f5; color: #6a1b9a; }
-.badge-car { background: #e0f2f1; color: #004d40; }
 .badge-other { background: #f5f5f5; color: #424242; }
 </style>
 
 <div class="card">
-    <h2>My Expenses</h2>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+        <h2 style="margin:0;">My Expenses</h2>
+        <a href="{{ url_for('add_expense') }}" class="cta-link" style="font-size:14px;">+ Add expense</a>
+    </div>
     {% if expenses %}
         <table>
             <thead>
                 <tr>
+                    <th>Item</th>
                     <th>Category</th>
-                    <th>Amount ($)</th>
+                    <th>Amount</th>
                     <th>Date</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {% for expense in expenses %}
+                {% set cat = expense[2]|lower %}
+                {% if 'food' in cat %}{% set badge = 'badge-food' %}
+                {% elif 'transport' in cat %}{% set badge = 'badge-transport' %}
+                {% elif 'entertain' in cat %}{% set badge = 'badge-entertainment' %}
+                {% elif 'rent' in cat or 'util' in cat %}{% set badge = 'badge-rent' %}
+                {% elif 'health' in cat or 'fit' in cat %}{% set badge = 'badge-health' %}
+                {% elif 'edu' in cat %}{% set badge = 'badge-education' %}
+                {% elif 'shop' in cat %}{% set badge = 'badge-shopping' %}
+                {% elif 'travel' in cat %}{% set badge = 'badge-travel' %}
+                {% else %}{% set badge = 'badge-other' %}
+                {% endif %}
                 <tr>
-                    <td>
-                        <span class="badge badge-{{ expense[2]|lower|replace(' ', '-')|replace('/', '-') }}">
-                            {{ expense[2] }}
-                        </span>
-                    </td>
+                    <td>{{ expense[5] if expense[5] else '—' }}</td>
+                    <td><span class="badge {{ badge }}">{{ expense[2] }}</span></td>
                     <td>${{ "{:,.2f}".format(expense[3]|float) }}</td>
                     <td>{{ expense[4] }}</td>
                     <td>
