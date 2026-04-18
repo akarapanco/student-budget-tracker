@@ -14,19 +14,19 @@
         <div class="overview-grid">
             <div class="stat-box">
                 <span class="label">Monthly Budget</span>
-                <span class="value">${{ current_budget }}</span>
+                <span class="value">${{ "{:,.2f}".format(current_budget|float) }}</span>
             </div>
             <div class="stat-box">
                 <span class="label">Total Income</span>
-                <span class="value" style="color: #2e7d32;">${{ overview.total_income }}</span>
+                <span class="value" style="color: #2e7d32;">${{ "{:,.2f}".format(overview.total_income|float) }}</span>
             </div>
             <div class="stat-box">
                 <span class="label">Total Expenses</span>
-                <span class="value" style="color: #c62828;">${{ overview.total_expenses }}</span>
+                <span class="value" style="color: #c62828;">${{ "{:,.2f}".format(overview.total_expenses|float) }}</span>
             </div>
             <div class="stat-box" style="border-left-color: var(--uf-blue);">
                 <span class="label">Remaining Balance</span>
-                <span class="value">${{ overview.remaining }}</span>
+                <span class="value">${{ "{:,.2f}".format(overview.remaining|float) }}</span>
             </div>
         </div>
     </div>
@@ -45,7 +45,7 @@
                     {% for category, total in totals %}
                     <tr>
                         <td>{{ category }}</td>
-                        <td>{{ total }}</td>
+                        <td>${{ "{:,.2f}".format(total|float) }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
