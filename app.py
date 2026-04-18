@@ -11,7 +11,7 @@ data_manager.setup_db()
 @app.route('/')
 def home():
     if 'user_id' in session:
-        return redirect(url_for('dashboard'))
+        return redirect(url_for('view_expenses'))
     return redirect(url_for('login'))
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -34,7 +34,7 @@ def login():
         if user is not None:
             session.permanent = True
             session['user_id'] = user[0]
-            return redirect(url_for('dashboard'))
+            return redirect(url_for('view_expenses'))
         else:
             return render_template('login.html', error_message="Incorrect username or password!")
     return render_template('login.html')
@@ -60,7 +60,7 @@ def add_income():
         amount = request.form['amount']
         if data_manager.add_income(session['user_id'], source, amount):
             session['success_message'] = "Income saved!"
-            return redirect(url_for('dashboard'))
+            return redirect(url_for('view_expenses'))
         else:
             return render_template('add_income.html', error_message="Error saving income. Please try again.")
     return render_template('add_income.html')
@@ -72,9 +72,10 @@ def add_expense():
     if request.method == 'POST':
         amount = request.form['amount']
         category = request.form.get('category', 'Other')
-        if data_manager.add_expense(session['user_id'], category, amount):
+        description = request.form.get('description', '')
+        if data_manager.add_expense(session['user_id'], category, amount, description):
             session['success_message'] = "Expense logged!"
-            return redirect(url_for('dashboard'))
+            return redirect(url_for('view_expenses'))
         else:
             return render_template('add_expense.html', error_message="Error logging expense. Please try again.")
     return render_template('add_expense.html')
@@ -141,14 +142,14 @@ def set_budget():
     if request.method == 'POST':
         selected = request.form.getlist('selected_categories')
         for category in selected:
-            amount = request.form.get(f'amount_{category}', 0)
+            amount = request.form.get('amount_' + category, 0)
             if amount:
                 data_manager.save_category_budget(session['user_id'], category, amount)
         amount = request.form.get('amount', 0)
         if amount:
             data_manager.save_budget(session['user_id'], current_month, amount)
         session['success_message'] = "Budget saved!"
-        return redirect(url_for('dashboard'))
+        return redirect(url_for('view_expenses'))
     existing = data_manager.get_category_budgets(session['user_id'])
     current_budget = data_manager.get_budget(session['user_id'], current_month)
     return render_template('set_budget.html', categories=categories, existing=existing, current_budget=current_budget)

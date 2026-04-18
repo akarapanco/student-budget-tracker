@@ -43,3 +43,14 @@ CREATE TABLE IF NOT EXISTS category_budgets (
     FOREIGN KEY (user_id) REFERENCES users (id),
     UNIQUE(user_id, category)
 );
+
+-- add description to expenses (run manually if table exists)
+CREATE TABLE IF NOT EXISTS expenses_new (
+    expense_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    description TEXT DEFAULT '',
+    category TEXT NOT NULL,
+    amount REAL NOT NULL CHECK(amount > 0),
+    date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users (id)
+);
