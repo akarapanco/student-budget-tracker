@@ -6,9 +6,27 @@
     <h2>Spending Summary</h2>
     {% if totals %}
         <table>
-            <tr><th>Category</th><th>Total Spent ($)</th></tr>
+            <tr>
+                <th>Category</th>
+                <th>Total Spent ($)</th>
+                <th>Budget</th>
+                <th>% Used</th>
+            </tr>
             {% for category, total in totals %}
-            <tr><td>{{ category }}</td><td>${{ "{:,.2f}".format(total|float) }}</td></tr>
+            {% set budget = budgets.get(category, 0) %}
+            <tr>
+                <td>{{ category }}</td>
+                <td>${{ "{:,.2f}".format(total|float) }}</td>
+                <td>{% if budget %}${{ "{:,.2f}".format(budget|float) }}{% else %}—{% endif %}</td>
+                <td>
+                    {% if budget %}
+                        {% set pct = (total / budget * 100)|round(1) %}
+                        <span style="color: {% if pct >= 100 %}#c62828{% elif pct >= 80 %}#e65100{% else %}#2e7d32{% endif %}; font-weight:600;">
+                            {{ pct }}%
+                        </span>
+                    {% else %}—{% endif %}
+                </td>
+            </tr>
             {% endfor %}
         </table>
     {% else %}
@@ -16,9 +34,9 @@
     {% endif %}
 
     {% if alert %}
-    <div style="background-color: #fff3cd; border: 1px solid #ffeeba; color: #856404; padding: 15px; border-radius: 5px; margin-bottom: 20px; font-weight: bold;">
-            {{ alert.message }}
-        </div>
+    <div style="background-color: #fff3cd; border: 1px solid #ffeeba; color: #856404; padding: 15px; border-radius: 5px; margin-top: 20px; font-weight: bold;">
+        {{ alert.message }}
+    </div>
     {% endif %}
 </div>
 {% endblock %}

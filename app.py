@@ -49,7 +49,8 @@ def dashboard():
     totals = data_manager.get_category_totals(user_id)
     alert = data_manager.budget_alert(user_id)
     success_message = session.pop('success_message', None)
-    return render_template('dashboard.html', current_budget=current_budget, overview=overview, totals=totals, alert=alert, success_message=success_message)
+    budgets = data_manager.get_category_budgets(user_id)
+    return render_template('dashboard.html', current_budget=current_budget, overview=overview, totals=totals, alert=alert, success_message=success_message, budgets=budgets)
 
 @app.route('/add_income', methods=['GET', 'POST'])
 def add_income():
@@ -114,7 +115,8 @@ def spending_summary():
         return redirect(url_for('login'))
     totals = data_manager.get_category_totals(session['user_id'])
     alert = data_manager.budget_alert(session['user_id'])
-    return render_template('spending_summary.html', totals=totals, alert=alert)
+    budgets = data_manager.get_category_budgets(session['user_id'])
+    return render_template('spending_summary.html', totals=totals, alert=alert, budgets=budgets)
 
 @app.route('/financial_overview')
 def financial_overview():
