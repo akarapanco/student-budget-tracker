@@ -15,12 +15,18 @@
 .budget-cat-card { background: #f8f9fa; border-radius: 8px; padding: 1rem; border-top: 3px solid var(--uf-orange); }
 .budget-cat-card label { font-size: 12px; font-weight: 600; color: var(--uf-blue); display: block; margin-bottom: 6px; }
 .budget-cat-card input { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; }
+.divider { border: none; border-top: 1px solid #eee; margin: 1.25rem 0; }
 </style>
 
 <div class="card">
     <h2>Set Budget</h2>
     <form method="POST">
-        <label style="font-weight:600;color:var(--uf-blue);display:block;margin-bottom:8px;">Select categories to set a budget for:</label>
+        <label style="font-weight:600;color:var(--uf-blue);">Overall budget:</label>
+        <input type="number" name="amount" step="0.01" min="0" placeholder="0.00" value="{{ "{:.2f}".format(current_budget|float) if current_budget else "" }}">
+
+        <hr class="divider">
+
+        <label style="font-weight:600;color:var(--uf-blue);display:block;margin-bottom:8px;">Set budgets by category (optional):</label>
         <div class="chip-row" id="chipRow">
             {% for category in categories %}
             <div class="chip {% if category in existing %}selected{% endif %}"
