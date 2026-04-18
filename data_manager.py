@@ -201,7 +201,7 @@ def budget_alert(user_id):
     if spending_percentage > time_percentage + 20:
         return {
             "level": "warning",
-            "message": f"You have spent {spending_percentage:.2f}% of your budget with {time_percentage:.2f}% of the month gone.",
+            "message": f"You have spent {spending_percentage:.2f}% of your budget.",
             "spending": round(total_spent, 2),
             "budget": budget
         }
