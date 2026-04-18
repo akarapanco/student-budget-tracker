@@ -34,3 +34,12 @@ CREATE TABLE IF NOT EXISTS budgets (
     FOREIGN KEY (user_id) REFERENCES users (id),
     UNIQUE(user_id, month)
 );
+-- category budgets table
+CREATE TABLE IF NOT EXISTS category_budgets (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    category TEXT NOT NULL,
+    amount REAL NOT NULL CHECK(amount > 0),
+    FOREIGN KEY (user_id) REFERENCES users (id),
+    UNIQUE(user_id, category)
+);

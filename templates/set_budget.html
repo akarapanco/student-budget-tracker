@@ -2,12 +2,67 @@
 {% block title %}Set Budget{% endblock %}
 
 {% block content %}
-<div class="card" style="max-width: 400px; margin: 50px auto;">
-    <form method="POST" action="{{ url_for('set_budget') }}">
-        <label>Monthly Budget Amount:</label>
-        <input type="number" step="0.01" min="0.01" name="amount" required>
-        <button type="submit">Set Budget</button>
-    </form>
+<style>
+.chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 1.25rem; }
+.chip {
+    padding: 6px 14px; border-radius: 20px;
+    border: 2px solid var(--uf-blue); font-size: 13px;
+    color: var(--uf-blue); cursor: pointer;
+    background: #fff; font-weight: 600; transition: all 0.2s;
+}
+.chip.selected { background: var(--uf-blue); color: #fff; }
+.budget-inputs { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-bottom: 1.25rem; }
+.budget-cat-card { background: #f8f9fa; border-radius: 8px; padding: 1rem; border-top: 3px solid var(--uf-orange); }
+.budget-cat-card label { font-size: 12px; font-weight: 600; color: var(--uf-blue); display: block; margin-bottom: 6px; }
+.budget-cat-card input { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; }
+</style>
 
+<div class="card">
+    <h2>Set Budget</h2>
+    <form method="POST">
+        <label style="font-weight:600;color:var(--uf-blue);">Overall Monthly Budget:</label>
+        <input type="number" name="amount" step="0.01" min="0" placeholder="0.00" value="{{ current_budget }}">
+
+        <label style="font-weight:600;color:var(--uf-blue);display:block;margin-bottom:8px;">Select categories to set individual budgets:</label>
+        <div class="chip-row" id="chipRow">
+            {% for category in categories %}
+            <div class="chip {% if category in existing %}selected{% endif %}"
+                 onclick="toggleChip(this, '{{ category }}')">
+                {{ category }}
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="budget-inputs" id="budgetInputs">
+            {% for category in categories %}
+            <div class="budget-cat-card" id="card_{{ loop.index }}"
+                 style="{% if category not in existing %}display:none{% endif %}">
+                <label>{{ category }}</label>
+                <input type="number" name="amount_{{ category }}" step="0.01" min="0"
+                       placeholder="$0.00" value="{{ existing.get(category, '') }}">
+                <input type="hidden" name="selected_categories" value="{{ category }}"
+                       id="hidden_{{ loop.index }}" {% if category not in existing %}disabled{% endif %}>
+            </div>
+            {% endfor %}
+        </div>
+
+        <button type="submit">Save budgets</button>
+    </form>
 </div>
+
+<script>
+function toggleChip(chip, category) {
+    chip.classList.toggle('selected');
+    const index = Array.from(chip.parentElement.children).indexOf(chip) + 1;
+    const card = document.getElementById('card_' + index);
+    const hidden = document.getElementById('hidden_' + index);
+    if (chip.classList.contains('selected')) {
+        card.style.display = 'block';
+        hidden.disabled = false;
+    } else {
+        card.style.display = 'none';
+        hidden.disabled = true;
+    }
+}
+</script>
 {% endblock %}
