@@ -233,3 +233,24 @@ def budget_alert(user_id):
         }
     
     return None
+def save_category_budget(user_id, category, amount):
+    try:
+        connection = get_db_connection()
+        connection.execute("""
+            INSERT INTO category_budgets (user_id, category, amount)
+            VALUES (?, ?, ?)
+            ON CONFLICT(user_id, category) DO UPDATE SET amount = ?
+        """, (user_id, category, amount, amount))
+        connection.commit()
+        connection.close()
+        return True
+    except Exception as e:
+        return False
+
+def get_category_budgets(user_id):
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute("SELECT category, amount FROM category_budgets WHERE user_id = ?", (user_id,))
+    rows = cursor.fetchall()
+    connection.close()
+    return {row[0]: row[1] for row in rows}
