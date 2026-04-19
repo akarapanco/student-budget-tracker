@@ -21,9 +21,9 @@
         <tbody>
             {% for income in incomes %}
             <tr>
-                <td>{{ income[2] }}</td>
+                <td>{{ income[2]|capitalize }}</td>
                 <td style="color: green; font-weight: bold;">${{ "{:,.2f}".format(income[3]|float) }}</td>
-                <td style="color: #888;">{{ income[4] }}</td>
+                <td style="color: #888;">{{ income[4][:10] }}</td>
             </tr>
             {% endfor %}
         </tbody>

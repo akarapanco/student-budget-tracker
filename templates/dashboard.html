@@ -5,7 +5,8 @@
     {% if current_budget and overview.total_expenses %}
         {% set overall_pct = (overview.total_expenses / current_budget * 100)|round(1) %}
         {% if overall_pct >= 80 %}
-        <div style="background-color: {% if overall_pct >= 100 %}#fdecea{% else %}#fff3cd{% endif %}; border-left: 5px solid {% if overall_pct >= 100 %}#d32f2f{% else %}var(--uf-orange){% endif %}; padding: 12px 15px; border-radius: 8px; margin-bottom: 10px; font-weight: 500;">
+        <div style="background-color: {% if overall_pct >= 100 %}#fdecea{% else %}#fff3cd{% endif %}; border-left: 5px solid {% if overall_pct >= 100 %}#d32f2f{% else %}var(--uf-orange){% endif %}; padding: 12px 15px; border-radius: 8px; margin-bottom: 10px; font-weight: 500; position:relative;" id="alert-overall">
+            <span onclick="document.getElementById('alert-overall').style.display='none'" style="position:absolute;right:12px;top:8px;cursor:pointer;font-size:18px;color:#888;">&times;</span>
             {% if overall_pct >= 100 %}🚨{% else %}⚠️{% endif %}
             <strong>Overall budget:</strong> {{ overall_pct }}% used
         </div>
@@ -15,7 +16,8 @@
     {% for category, total in totals %}
         {% set budget = budgets.get(category, 0) %}
         {% if budget and (total / budget * 100) >= 80 %}
-        <div style="background-color: {% if (total / budget * 100) >= 100 %}#fdecea{% else %}#fff3cd{% endif %}; border-left: 5px solid {% if (total / budget * 100) >= 100 %}#d32f2f{% else %}var(--uf-orange){% endif %}; padding: 12px 15px; border-radius: 8px; margin-bottom: 10px; font-weight: 500;">
+        <div style="background-color: {% if (total / budget * 100) >= 100 %}#fdecea{% else %}#fff3cd{% endif %}; border-left: 5px solid {% if (total / budget * 100) >= 100 %}#d32f2f{% else %}var(--uf-orange){% endif %}; padding: 12px 15px; border-radius: 8px; margin-bottom: 10px; font-weight: 500; position:relative;" id="alert-{{ loop.index }}">
+            <span onclick="document.getElementById('alert-{{ loop.index }}').style.display='none'" style="position:absolute;right:12px;top:8px;cursor:pointer;font-size:18px;color:#888;">&times;</span>
             {% if (total / budget * 100) >= 100 %}🚨{% else %}⚠️{% endif %}
             <strong>{{ category }}:</strong> {{ (total / budget * 100)|round(1) }}% used
         </div>
@@ -65,6 +67,32 @@
             </table>
         {% else %}
             <p>No expenses logged yet. <a href="{{ url_for('add_expense') }}" class="cta-link">Log one now!</a></p>
+        {% endif %}
+    </div>
+
+    <div class="card">
+        <h2>Income History</h2>
+        {% if incomes %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Source</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for income in incomes %}
+                    <tr>
+                        <td>{{ income[2]|capitalize }}</td>
+                        <td style="color: #2e7d32; font-weight: bold;">${{ "{:,.2f}".format(income[3]|float) }}</td>
+                        <td style="color: #888;">{{ income[4][:10] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No income logged yet. <a href="{{ url_for('add_income') }}" class="cta-link">Add one now!</a></p>
         {% endif %}
     </div>
 {% endblock %}
