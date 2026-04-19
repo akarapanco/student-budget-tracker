@@ -12,7 +12,7 @@ data_manager.migrate_db()
 @app.route('/')
 def home():
     if 'user_id' in session:
-        return redirect(url_for('add_income'))
+        return redirect(url_for('view_expenses'))
     return redirect(url_for('login'))
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -35,7 +35,7 @@ def login():
         if user is not None:
             session.permanent = True
             session['user_id'] = user[0]
-            return redirect(url_for('add_income'))
+            return redirect(url_for('view_expenses'))
         else:
             return render_template('login.html', error_message="Incorrect username or password!")
     return render_template('login.html')
@@ -78,7 +78,7 @@ def add_expense():
         description = request.form.get('description', '')
         if data_manager.add_expense(session['user_id'], category, amount, description):
             session['success_message'] = "Expense logged!"
-            return redirect(url_for('add_income'))
+            return redirect(url_for('view_expenses'))
         else:
             return render_template('add_expense.html', error_message="Error logging expense. Please try again.")
     return render_template('add_expense.html')
@@ -91,7 +91,7 @@ def delete_expense(expense_id):
         session['success_message'] = "Expense deleted successfully."
     else:
         session['error_message'] = "Error deleting expense. Please try again."
-    return redirect(url_for('add_income'))
+    return redirect(url_for('view_expenses'))
 
 @app.route('/edit_expense/<int:expense_id>', methods=['GET', 'POST'])
 def edit_expense(expense_id):
@@ -102,13 +102,13 @@ def edit_expense(expense_id):
         new_amount = request.form['amount']
         if data_manager.edit_expense(expense_id, session['user_id'], new_category, new_amount):
             session['success_message'] = "Expense updated."
-            return redirect(url_for('add_income'))
+            return redirect(url_for('view_expenses'))
         else:
             expense = data_manager.get_expense(expense_id, session['user_id'])
             return render_template('edit_expense.html', expense=expense, error_message="Error updating expense. Please try again.")
     expense = data_manager.get_expense(expense_id, session['user_id'])
     if not expense:
-        return redirect(url_for('add_income'))
+        return redirect(url_for('view_expenses'))
     return render_template('edit_expense.html', expense=expense)
 
 @app.route('/spending_summary')
@@ -153,7 +153,7 @@ def set_budget():
         if amount:
             data_manager.save_budget(session['user_id'], current_month, amount)
         session['success_message'] = "Budget saved!"
-        return redirect(url_for('add_income'))
+        return redirect(url_for('view_expenses'))
     existing = data_manager.get_category_budgets(session['user_id'])
     current_budget = data_manager.get_budget(session['user_id'], current_month)
     return render_template('set_budget.html', categories=categories, existing=existing, current_budget=current_budget)
