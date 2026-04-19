@@ -206,3 +206,12 @@ def budget_alert(user_id):
             "budget": budget
         }
     return None
+
+def migrate_db():
+    connection = get_db_connection()
+    try:
+        connection.execute("ALTER TABLE expenses ADD COLUMN description TEXT DEFAULT ''")
+        connection.commit()
+    except Exception:
+        pass
+    connection.close()
