@@ -63,7 +63,7 @@ def add_income():
         amount = request.form['amount']
         if data_manager.add_income(session['user_id'], source, amount):
             incomes = data_manager.get_incomes(session['user_id'])
-            return render_template('add_income.html', incomes=incomes, success_message="Income saved!")
+            return render_template('add_income.html', show_history=True, incomes=incomes, success_message="Income saved!")
         else:
             return render_template('add_income.html', error_message="Error saving income. Please try again.")
     show_history = request.args.get('history') == '1'
