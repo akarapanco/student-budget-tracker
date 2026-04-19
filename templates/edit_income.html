@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+{% block title %}Edit Income{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>Edit Income</h2>
+    <form method="POST">
+        <label>Income Source:</label>
+        <input type="text" name="source" value="{{ income[2]|capitalize }}" required>
+        <label>Amount ($):</label>
+        <input type="number" step="0.01" min="0.01" name="amount" value="{{ income[3] }}" required>
+        <button type="submit">Update Income</button>
+    </form>
+    <p style="margin-top:15px;text-align:center;">
+        <a href="{{ url_for('add_income') }}?history=1" class="cta-link">← Back to history</a>
+    </p>
+</div>
+{% endblock %}

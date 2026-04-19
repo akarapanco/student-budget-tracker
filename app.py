@@ -12,7 +12,7 @@ data_manager.migrate_db()
 @app.route('/')
 def home():
     if 'user_id' in session:
-        return redirect(url_for('view_expenses'))
+        return redirect(url_for('dashboard'))
     return redirect(url_for('login'))
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -35,7 +35,7 @@ def login():
         if user is not None:
             session.permanent = True
             session['user_id'] = user[0]
-            return redirect(url_for('view_expenses'))
+            return redirect(url_for('dashboard'))
         else:
             return render_template('login.html', error_message="Incorrect username or password!")
     return render_template('login.html')
@@ -66,7 +66,9 @@ def add_income():
             return render_template('add_income.html', incomes=incomes, success_message="Income saved!")
         else:
             return render_template('add_income.html', error_message="Error saving income. Please try again.")
-    return render_template('add_income.html')
+    show_history = request.args.get('history') == '1'
+    incomes = data_manager.get_incomes(session['user_id']) if show_history else []
+    return render_template('add_income.html', show_history=show_history, incomes=incomes)
 
 @app.route('/add_expense', methods=['GET', 'POST'])
 def add_expense():
@@ -162,6 +164,28 @@ def set_budget():
 def logout():
     session.clear()
     return redirect(url_for('login'))
+
+
+@app.route('/delete_income/<int:income_id>', methods=['POST'])
+def delete_income(income_id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    data_manager.delete_income(income_id, session['user_id'])
+    incomes = data_manager.get_incomes(session['user_id'])
+    return render_template('add_income.html', show_history=True, incomes=incomes, success_message="Income deleted.")
+
+@app.route('/edit_income/<int:income_id>', methods=['GET', 'POST'])
+def edit_income(income_id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    if request.method == 'POST':
+        new_source = request.form['source']
+        new_amount = request.form['amount']
+        data_manager.edit_income(income_id, session['user_id'], new_source, new_amount)
+        incomes = data_manager.get_incomes(session['user_id'])
+        return render_template('add_income.html', show_history=True, incomes=incomes, success_message="Income updated.")
+    income = data_manager.get_income(income_id, session['user_id'])
+    return render_template('edit_income.html', income=income)
 
 if __name__ == '__main__':
     app.run(debug=True)

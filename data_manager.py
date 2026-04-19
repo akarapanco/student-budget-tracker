@@ -215,3 +215,34 @@ def migrate_db():
     except Exception:
         pass
     connection.close()
+
+def delete_income(income_id, user_id):
+    try:
+        connection = get_db_connection()
+        connection.execute("DELETE FROM incomes WHERE income_id = ? AND user_id = ?", (income_id, user_id))
+        connection.commit()
+        connection.close()
+        return True
+    except Exception:
+        return False
+
+def edit_income(income_id, user_id, new_source, new_amount):
+    if not is_valid_txn(new_amount):
+        return False
+    try:
+        connection = get_db_connection()
+        connection.execute("UPDATE incomes SET source = ?, amount = ? WHERE income_id = ? AND user_id = ?",
+                           (new_source, new_amount, income_id, user_id))
+        connection.commit()
+        connection.close()
+        return True
+    except Exception:
+        return False
+
+def get_income(income_id, user_id):
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM incomes WHERE income_id = ? AND user_id = ?", (income_id, user_id))
+    income = cursor.fetchone()
+    connection.close()
+    return income
