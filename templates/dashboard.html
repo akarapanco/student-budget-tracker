@@ -47,7 +47,10 @@
     </div>
 
     <div class="card">
-        <h2>Spending Summary</h2>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+            <h2 style="margin:0;">Spending Summary</h2>
+            <a href="{{ url_for('view_expenses') }}" class="cta-link" style="font-size:13px;">View all →</a>
+        </div>
         {% if totals %}
             <table>
                 <thead>
@@ -71,7 +74,10 @@
     </div>
 
     <div class="card">
-        <h2>Income History</h2>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+            <h2 style="margin:0;">Income History</h2>
+            <a href="{{ url_for('add_income') }}?history=1" class="cta-link" style="font-size:13px;">View all →</a>
+        </div>
         {% if incomes %}
             <table>
                 <thead>
