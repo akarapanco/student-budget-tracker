@@ -102,7 +102,8 @@ def edit_expense(expense_id):
     if request.method == 'POST':
         new_category = request.form['category']
         new_amount = request.form['amount']
-        if data_manager.edit_expense(expense_id, session['user_id'], new_category, new_amount):
+        new_description = request.form.get('description', '')
+        if data_manager.edit_expense(expense_id, session['user_id'], new_category, new_amount, new_description):
             session['success_message'] = "Expense updated."
             return redirect(url_for('view_expenses'))
         else:
