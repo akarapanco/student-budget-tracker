@@ -51,7 +51,8 @@ def dashboard():
     alert = data_manager.budget_alert(user_id)
     success_message = session.pop('success_message', None)
     budgets = data_manager.get_category_budgets(user_id)
-    return render_template('dashboard.html', current_budget=current_budget, overview=overview, totals=totals, alert=alert, success_message=success_message, budgets=budgets)
+    incomes = data_manager.get_incomes(user_id)
+    return render_template('dashboard.html', current_budget=current_budget, overview=overview, totals=totals, alert=alert, success_message=success_message, budgets=budgets, incomes=incomes)
 
 @app.route('/add_income', methods=['GET', 'POST'])
 def add_income():

@@ -45,10 +45,10 @@
                 {% else %}{% set badge = 'badge-other' %}
                 {% endif %}
                 <tr>
-                    <td>{{ expense[5] if expense[5] else '—' }}</td>
+                    <td>{{ (expense[5]|capitalize) if expense[5] else '—' }}</td>
                     <td><span class="badge {{ badge }}">{{ expense[2] }}</span></td>
                     <td>${{ "{:,.2f}".format(expense[3]|float) }}</td>
-                    <td>{{ expense[4] }}</td>
+                    <td>{{ expense[4][:10] }}</td>
                     <td>
                         <a href="{{ url_for('edit_expense', expense_id=expense[0]) }}">Edit</a> |
                         <form method="POST" action="{{ url_for('delete_expense', expense_id=expense[0]) }}" style="display:inline;">
