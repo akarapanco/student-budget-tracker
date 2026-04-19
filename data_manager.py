@@ -75,13 +75,13 @@ def delete_expense(expense_id, user_id):
     except Exception:
         return False
 
-def edit_expense(expense_id, user_id, new_category, new_amount):
+def edit_expense(expense_id, user_id, new_category, new_amount, new_description=""):
     if not is_valid_txn(new_amount):
         return False
     try:
         connection = get_db_connection()
-        connection.execute("UPDATE expenses SET category = ?, amount = ? WHERE expense_id = ? AND user_id = ?",
-                           (new_category, new_amount, expense_id, user_id))
+        connection.execute("UPDATE expenses SET category = ?, amount = ?, description = ? WHERE expense_id = ? AND user_id = ?",
+                           (new_category, new_amount, new_description, expense_id, user_id))
         connection.commit()
         connection.close()
         return True
