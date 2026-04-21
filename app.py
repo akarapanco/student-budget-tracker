@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from datetime import datetime, timedelta
 import data_manager
+import os
 
 app = Flask(__name__)
 app.secret_key = '12345'
@@ -189,4 +190,4 @@ def edit_income(income_id):
     return render_template('edit_income.html', income=income)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=os.getenv("FLASK_DEBUG", "False") == "True")
